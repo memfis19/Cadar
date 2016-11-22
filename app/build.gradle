@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 ext {
     PUBLISH_GROUP_ID = 'io.github.memfis19'
-    PUBLISH_ARTIFACT_ID = 'annca'
+    PUBLISH_ARTIFACT_ID = 'cadar'
     PUBLISH_VERSION = '1.0.0'
     PUBLISH_VERSION_CODE = 1
     SUPPORT_VERSION = '25.0.1'
