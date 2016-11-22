@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <include
+        android:id="@+id/control_bar"
+        layout="@layout/extended_month_calendar_top_control_bar" />
+
+    <io.github.memfis19.cadar.view.MonthCalendar
+        android:id="@+id/month_calendar"
+        android:layout_width="match_parent"
+        android:layout_height="235dp"
+        android:layout_below="@+id/control_bar" />
+
+    <View
+        android:id="@+id/monthViewBottomLine"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/month_calendar"
+        android:background="?android:attr/listDivider"
+        android:minHeight="1dp" />
+
+</merge>

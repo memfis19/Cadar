@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_all_day_label">Hele dag</string>
+    <string name="calendar_week">Uge</string>
+</resources>

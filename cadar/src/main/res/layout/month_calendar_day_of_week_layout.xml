@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:grid="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/week_day_title"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:inputType="textCapSentences"
+    android:textAppearance="?android:attr/textAppearanceSmall"
+    android:textColor="#212121"
+    android:textSize="12sp"
+    grid:layout_columnWeight="1" />
+

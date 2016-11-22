@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/day_title"
+        android:layout_width="70dp"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center_horizontal|top"
+        android:textSize="22dp"
+        tools:text="22 mon" />
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/event_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:background="#ffffff"
+        android:paddingBottom="5dp"
+        android:paddingLeft="16dp">
+
+        <ImageView
+            android:id="@+id/calendar_sync_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="10dp"
+            android:clickable="true"
+            android:contentDescription="@string/sync_icon"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ico_sync"
+            android:tint="@color/material_light_secondary_text_color" />
+
+        <TextView
+            android:id="@+id/event_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@id/calendar_sync_icon"
+            android:drawablePadding="10dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="#212121"
+            android:textSize="16dp"
+            tools:text="Event title" />
+
+        <TextView
+            android:id="@+id/event_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/event_title"
+            android:layout_marginTop="5dp"
+            android:textColor="#949494"
+            android:textSize="14dp"
+            tools:text="All day" />
+
+        <TextView
+            android:id="@+id/indicators_owner_synchronize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="12dp"
+            android:drawablePadding="5dp" />
+    </RelativeLayout>
+
+</LinearLayout>

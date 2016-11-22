@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rename_button" translatable="false">rename_button</string>
+    <string name="delete_button" translatable="false">delete_button</string>
+    <string name="edit_button" translatable="false">edit_button</string>
+    <string name="event_icon" translatable="false">event_icon</string>
+    <string name="arrow" translatable="false">arrow</string>
+    <string name="sync_icon" translatable="false">sync_icon</string>
+</resources>

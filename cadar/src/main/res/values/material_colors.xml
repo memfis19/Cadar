@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="material_light_title_text_color">#de000000</color>
+    <color name="material_light_secondary_text_color">#8a000000</color>
+    <color name="material_light_background_color">#FAFAFA</color>
+</resources>

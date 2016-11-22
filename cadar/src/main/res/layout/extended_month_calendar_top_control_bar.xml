@@ -1,0 +1,41 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?actionBarSize">
+
+    <FrameLayout
+        android:id="@+id/today_day_label_container"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true">
+
+        <TextView
+            android:id="@+id/today_day_label"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:background="@drawable/today_small_circle_border"
+            android:gravity="center"
+            android:textColor="#737373"
+            android:textSize="12sp" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/month_year_label"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/today_day_label_container"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="5dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="5dp"
+        android:paddingStart="5dp"
+        android:textSize="22dp" />
+
+</RelativeLayout>

@@ -1,0 +1,158 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
+    }
+}
+
+group = 'io.github.memfis19'
+version = '0.1.0'
+
+ext {
+    PUBLISH_GROUP_ID = 'io.github.memfis19'
+    PUBLISH_ARTIFACT_ID = 'annca'
+    PUBLISH_VERSION = '0.1.0'
+    PUBLISH_VERSION_CODE = 1
+    SUPPORT_VERSION = '25.0.1'
+    TARGET_SDK = 24
+    MIN_SDK = 10
+    BUILD_TOOLS = "24.0.3"
+}
+
+configurations {
+    compile.exclude group: 'commons-logging'
+}
+
+repositories {
+    jcenter()
+    maven { url "http://repo1.maven.org/maven2/" }
+}
+
+android {
+    compileSdkVersion TARGET_SDK
+    buildToolsVersion BUILD_TOOLS
+
+    dexOptions {
+        preDexLibraries = false
+    }
+    defaultConfig {
+        minSdkVersion MIN_SDK
+        targetSdkVersion TARGET_SDK
+        versionCode PUBLISH_VERSION_CODE
+        versionName PUBLISH_VERSION
+    }
+    lintOptions {
+        abortOnError false
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude('org/apache/commons/codec/language/bm/*.txt')
+    }
+}
+
+task generateSourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier 'sources'
+}
+
+task generateJavadocs(type: Javadoc) {
+    failOnError false
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath()
+            .join(File.pathSeparator))
+}
+
+task generateJavadocsJar(type: Jar) {
+    from generateJavadocs.destinationDir
+    classifier 'javadoc'
+}
+
+generateJavadocsJar.dependsOn generateJavadocs
+
+artifacts {
+    archives generateSourcesJar
+    archives generateJavadocsJar
+}
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            name 'io.github.memfis19'
+            description 'Android solution which represents month and list calendar representations.'
+            url 'https://github.com/memfis19/Annca'
+            inceptionYear '2016'
+
+            packaging 'aar'
+            version PUBLISH_VERSION
+
+            scm {
+                connection 'https://github.com/memfis19/Annca.git'
+                url 'https://github.com/memfis19/Annca'
+
+            }
+            developers {
+                developer {
+                    name 'memfis19'
+                }
+            }
+        }
+    }
+}
+
+bintray {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    user = properties.getProperty('bintray.user')
+    key = properties.getProperty('bintray.apikey')
+    configurations = ['archives']
+    pkg {
+        repo = 'io.github.memfis19'
+        name = 'cadar'
+        userOrg = 'm-e-m-f-i-s'
+        desc = 'Android solution which represents month and list calendar representations.'
+        licenses = ['MIT']
+        labels = ['android', 'calendar', 'month', 'list']
+        websiteUrl = 'https://github.com/memfis19/Annca'
+        issueTrackerUrl = 'https://github.com/memfis19/Annca/issues'
+        vcsUrl = 'https://github.com/memfis19/Annca.git'
+        version {
+            name = PUBLISH_VERSION
+            vcsTag = PUBLISH_VERSION
+            desc = 'Initial commit.'
+            released = new Date()
+
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'org.mnode.ical4j:ical4j:1.0.5'
+    compile 'backport-util-concurrent:backport-util-concurrent:3.1'
+    compile 'commons-codec:commons-codec:1.8'
+    compile 'commons-lang:commons-lang:2.6'
+    compile 'joda-time:joda-time:2.8.2'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile "com.android.support:appcompat-v7:$SUPPORT_VERSION"
+    compile "com.android.support:recyclerview-v7:$SUPPORT_VERSION"
+    compile "com.android.support:support-v4:$SUPPORT_VERSION"
+    compile "com.android.support:gridlayout-v7:$SUPPORT_VERSION"
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
+}

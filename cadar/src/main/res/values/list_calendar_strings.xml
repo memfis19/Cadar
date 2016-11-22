@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Default string name for list swipe buttons-->
+    <string name="default_all_day_label">All Day</string>
+    <string name="calendar_week">Week</string>
+</resources>
