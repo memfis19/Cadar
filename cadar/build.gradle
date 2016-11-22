@@ -17,7 +17,7 @@ version = '0.1.0'
 
 ext {
     PUBLISH_GROUP_ID = 'io.github.memfis19'
-    PUBLISH_ARTIFACT_ID = 'annca'
+    PUBLISH_ARTIFACT_ID = 'cadar'
     PUBLISH_VERSION = '0.1.0'
     PUBLISH_VERSION_CODE = 1
     SUPPORT_VERSION = '25.0.1'
@@ -93,15 +93,15 @@ install {
         pom.project {
             name 'io.github.memfis19'
             description 'Android solution which represents month and list calendar representations.'
-            url 'https://github.com/memfis19/Annca'
+            url 'https://github.com/memfis19/Cadar'
             inceptionYear '2016'
 
             packaging 'aar'
             version PUBLISH_VERSION
 
             scm {
-                connection 'https://github.com/memfis19/Annca.git'
-                url 'https://github.com/memfis19/Annca'
+                connection 'https://github.com/memfis19/Cadar.git'
+                url 'https://github.com/memfis19/Cadar'
 
             }
             developers {
@@ -126,9 +126,9 @@ bintray {
         desc = 'Android solution which represents month and list calendar representations.'
         licenses = ['MIT']
         labels = ['android', 'calendar', 'month', 'list']
-        websiteUrl = 'https://github.com/memfis19/Annca'
-        issueTrackerUrl = 'https://github.com/memfis19/Annca/issues'
-        vcsUrl = 'https://github.com/memfis19/Annca.git'
+        websiteUrl = 'https://github.com/memfis19/Cadar'
+        issueTrackerUrl = 'https://github.com/memfis19/Cadar/issues'
+        vcsUrl = 'https://github.com/memfis19/Cadar.git'
         version {
             name = PUBLISH_VERSION
             vcsTag = PUBLISH_VERSION
