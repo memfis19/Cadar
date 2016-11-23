@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Cadar</string>
+
+
+    <string name="demo_month">Month calendar</string>
+    <string name="demo_list">List calendar</string>
+    <string name="demo_interaction">Interaction between month and list</string>
+
 </resources>

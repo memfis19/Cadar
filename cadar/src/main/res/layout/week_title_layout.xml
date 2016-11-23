@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="20dp"
-    android:gravity="center_vertical|left"
+    android:layout_marginStart="20dp"
+    android:gravity="center_vertical|start"
     android:paddingBottom="10dp"
     android:paddingTop="10dp"
     android:textSize="14sp" />

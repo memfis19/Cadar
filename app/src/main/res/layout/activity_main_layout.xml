@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/activity_main_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <io.github.memfis19.cadar.view.ExtendedMonthCalendar
-        android:id="@+id/extended_calendar"
+    <Button
+        android:id="@+id/demo_month_calendar"
         android:layout_width="match_parent"
-        android:layout_height="300dp" />
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/demo_month" />
 
-    <io.github.memfis19.cadar.view.MonthCalendar
-        android:id="@+id/monthCalendar"
+    <Button
+        android:id="@+id/demo_list_calendar"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_below="@id/extended_calendar"
-        android:visibility="gone" />
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/demo_list" />
 
-    <io.github.memfis19.cadar.view.ListCalendar
-        android:id="@+id/listCalendar"
+    <Button
+        android:id="@+id/demo_interaction_calendar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/monthCalendar"
-        android:visibility="gone" />
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/demo_interaction" />
 
-</RelativeLayout>
+</LinearLayout>

@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:inputType="textCapSentences"
     android:textAppearance="?android:attr/textAppearanceSmall"
-    android:textColor="#212121"
+    android:textColor="@color/month_title_color"
     android:textSize="12sp"
     grid:layout_columnWeight="1" />
 

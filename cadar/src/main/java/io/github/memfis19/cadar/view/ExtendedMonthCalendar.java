@@ -1,7 +1,6 @@
 package io.github.memfis19.cadar.view;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -9,6 +8,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Process;
 import android.support.annotation.IntDef;
+import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -26,16 +26,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import io.github.memfis19.cadar.CalendarController;
 import io.github.memfis19.cadar.R;
 import io.github.memfis19.cadar.data.entity.Event;
+import io.github.memfis19.cadar.event.CalendarPrepareCallback;
 import io.github.memfis19.cadar.event.OnDayChangeListener;
 import io.github.memfis19.cadar.event.OnMonthChangeListener;
-import io.github.memfis19.cadar.CalendarController;
-import io.github.memfis19.cadar.settings.MonthCalendarConfiguration;
 import io.github.memfis19.cadar.internal.ui.events.TimeOutClickListener;
-import io.github.memfis19.cadar.event.CalendarPrepareCallback;
 import io.github.memfis19.cadar.internal.utils.DateUtils;
 import io.github.memfis19.cadar.internal.utils.ViewUtils;
+import io.github.memfis19.cadar.settings.MonthCalendarConfiguration;
 
 /**
  * Created by serg on 19.10.15.
@@ -184,11 +184,11 @@ public class ExtendedMonthCalendar extends RelativeLayout {
         viewMenuAdapter.setDropDownViewResource(R.layout.extended_month_calendar_view_option_spinner_dropdown_item);
 
         arrowUpDrawable = ViewUtils.getDrawable(context, R.drawable.ic_arrow_drop_up_white_24dp);
-        arrowUpDrawable.setColorFilter(Color.DKGRAY, PorterDuff.Mode.MULTIPLY);
+        arrowUpDrawable.setColorFilter(ContextCompat.getColor(getContext(), R.color.month_title_color), PorterDuff.Mode.MULTIPLY);
         arrowUpDrawable.setBounds(0, 0, arrowUpDrawable.getIntrinsicWidth(), arrowUpDrawable.getIntrinsicHeight());
 
         arrowDownDrawable = ViewUtils.getDrawable(context, R.drawable.ic_arrow_drop_down_white_24dp);
-        arrowDownDrawable.setColorFilter(Color.DKGRAY, PorterDuff.Mode.MULTIPLY);
+        arrowDownDrawable.setColorFilter(ContextCompat.getColor(getContext(), R.color.month_title_color), PorterDuff.Mode.MULTIPLY);
         arrowDownDrawable.setBounds(0, 0, arrowDownDrawable.getIntrinsicWidth(), arrowDownDrawable.getIntrinsicHeight());
 
         updateMonthAndYearTitle(selectedDay);
@@ -326,9 +326,9 @@ public class ExtendedMonthCalendar extends RelativeLayout {
             Spannable monthSpannableText = new SpannableString(month + " " + DateUtils.dateToString(day.getTime(), YEAR_FORMAT));
             int wholeLength = monthSpannableText.length();
 
-            monthSpannableText.setSpan(new ForegroundColorSpan(Color.DKGRAY), 0, monthLength, 0);
+            monthSpannableText.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.month_title_color)), 0, monthLength, 0);
 
-            monthSpannableText.setSpan(new ForegroundColorSpan(Color.GRAY), monthLength, wholeLength, 0);
+            monthSpannableText.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.month_title_color)), monthLength, wholeLength, 0);
 
             final Spannable resultText = monthSpannableText;
 

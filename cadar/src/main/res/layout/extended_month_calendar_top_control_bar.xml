@@ -19,7 +19,7 @@
             android:layout_gravity="center"
             android:background="@drawable/today_small_circle_border"
             android:gravity="center"
-            android:textColor="#737373"
+            android:textColor="@color/month_title_color"
             android:textSize="12sp" />
 
     </FrameLayout>
@@ -36,6 +36,7 @@
         android:gravity="center_vertical"
         android:paddingLeft="5dp"
         android:paddingStart="5dp"
-        android:textSize="22dp" />
+        android:textColor="@color/month_title_color"
+        android:textSize="22sp" />
 
 </RelativeLayout>
