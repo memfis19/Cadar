@@ -40,7 +40,7 @@ public void onCalendarReady(CalendarController calendar) {
  });
 }
 ```
-#### For more extnded using please look at sample project.
+#### For more specific using please look at sample project.
 
 ## How to add to your project?
 ```
@@ -48,8 +48,8 @@ compile 'io.github.memfis19:cadar:0.1.0'
 ```
 
 ## Know issue
-Library has not release yet, so it will be extneded in future.
-Not full documentation will be fixed soon.
+-Library has not release yet, so it will be extended in future.</br>
+-Not full documentation will be fixed soon.
 
 # [LICENSE](/LICENSE.md)
 
