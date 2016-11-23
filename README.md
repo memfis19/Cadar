@@ -42,6 +42,11 @@ public void onCalendarReady(CalendarController calendar) {
 ```
 #### For more specific using please look at sample project.
 
+## Events processing:
+Events processing implemented in most simple way, each event has start date - date of start and end date - date of event end. Please notice that event does not have duration. so there is not exist stop date. Each event next periods for recurrency processting: none, every week, every 2 week, every 3 week, every 4 week, every month, every year. If event does npt have end date and repeat period set to none, that will single event, in case even has any other repeat period without end date, it will be endless event. 
+
+Month and list calendars limited in time. be defualt they displayed for 3 years. You are able to extend it via calendar configurations. In case if you want to use list and month calendars coupled, then you need to keep the same configuration settings for them.
+
 ## How to add to your project?
 ```
 compile 'io.github.memfis19:cadar:0.1.0'
