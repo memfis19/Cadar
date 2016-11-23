@@ -1,6 +1,6 @@
 # Cadar
 Android solution which represents month and list calendars views and possibility to display events: just set of events and recurrent as well, but with limitations. For events processing I was using <a href="https://github.com/ical4j/ical4j">Ical4J</a> library.</br>
-<img src="https://github.com/memfis19/Cadar/blob/master/art/list_calendar.png" width="200px" /> <img src="https://github.com/memfis19/Cadar/blob/master/art/month_calendar.png" width="200px" /> <video src="https://github.com/memfis19/Cadar/blob/master/art/interaction.mp4" width="200px"preload></video>
+<img src="https://github.com/memfis19/Cadar/blob/master/art/list_calendar.png" width="200px" /> <img src="https://github.com/memfis19/Cadar/blob/master/art/month_calendar.png" width="200px" /> <img src="https://github.com/memfis19/Cadar/blob/master/art/interaction_anim.gif" width=200px/>
 
 ## Example of most common using
 1. Add to your layout file:
