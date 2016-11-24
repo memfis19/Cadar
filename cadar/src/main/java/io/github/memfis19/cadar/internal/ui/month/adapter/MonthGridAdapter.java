@@ -13,19 +13,18 @@ import java.util.List;
 
 import io.github.memfis19.cadar.data.entity.Event;
 import io.github.memfis19.cadar.event.OnDayChangeListener;
+import io.github.memfis19.cadar.internal.helper.ScrollManager;
 import io.github.memfis19.cadar.internal.process.BaseEventsAsyncProcessor;
 import io.github.memfis19.cadar.internal.ui.month.MonthCalendarHelper;
 import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.MonthDayDecorator;
-import io.github.memfis19.cadar.internal.ui.month.adapter.holder.MonthDayViewHolder;
-import io.github.memfis19.cadar.view.MonthCalendar;
-import io.github.memfis19.cadar.internal.helper.ScrollManager;
+import io.github.memfis19.cadar.internal.ui.month.adapter.holder.MonthDayHolder;
 import io.github.memfis19.cadar.internal.utils.DateUtils;
 
 
 /**
  * Created by memfis on 7/13/16.
  */
-public class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements OnDayChangeListener {
+class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements OnDayChangeListener {
 
     private static final String TAG = "MonthGridAdapter";
 
@@ -34,7 +33,7 @@ public class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private List<Calendar> monthDays = new ArrayList<>();
     private SparseArray<List<Event>> calendarEvents = new SparseArray();
-    private List<MonthDayViewHolder> monthDayViewHolders = new ArrayList<>();
+    private List<MonthDayHolder> monthDayHolders = new ArrayList<>();
 
     private boolean containsToday = false;
     private boolean containsSelected = false;
@@ -46,7 +45,7 @@ public class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private BaseEventsAsyncProcessor eventsAsyncProcessor;
     private OnDayChangeListener onDateChangeListener;
 
-    public MonthGridAdapter(Calendar month, List<Calendar> monthItems) {
+    MonthGridAdapter(Calendar month, List<Calendar> monthItems) {
         this.month = month;
         this.month.set(Calendar.DAY_OF_MONTH, 1);
         this.monthDays = monthItems;
@@ -60,24 +59,24 @@ public class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 && month.get(Calendar.YEAR) == MonthCalendarHelper.getSelectedDay().get(Calendar.YEAR);
     }
 
-    public void requestDisplayEvents() {
+    void requestDisplayEvents() {
         if (ScrollManager.getInstance().getCurrentScrollState() == ScrollManager.SCROLL_STATE_IDLE)
             requestMonthEvents();
     }
 
-    public void setMonthDayLayoutId(@LayoutRes int monthDayLayoutId) {
+    void setMonthDayLayoutId(@LayoutRes int monthDayLayoutId) {
         this.monthDayLayoutId = monthDayLayoutId;
     }
 
-    public void setMonthDayDecorator(MonthDayDecorator monthDayDecorator) {
+    void setMonthDayDecorator(MonthDayDecorator monthDayDecorator) {
         this.monthDayDecorator = monthDayDecorator;
     }
 
-    public void setEventsAsyncProcessor(BaseEventsAsyncProcessor eventsAsyncProcessor) {
+    void setEventsAsyncProcessor(BaseEventsAsyncProcessor eventsAsyncProcessor) {
         this.eventsAsyncProcessor = eventsAsyncProcessor;
     }
 
-    public void setOnDateChangeListener(OnDayChangeListener onDateChangeListener) {
+    void setOnDateChangeListener(OnDayChangeListener onDateChangeListener) {
         this.onDateChangeListener = onDateChangeListener;
     }
 
@@ -85,11 +84,11 @@ public class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return month;
     }
 
-    public void requestMonthEvents() {
+    void requestMonthEvents() {
         eventsAsyncProcessor.queueEventsProcess(month);
     }
 
-    public void displayEventsForMonth(SparseArray<List<Event>> calendarEvents) {
+    void displayEventsForMonth(SparseArray<List<Event>> calendarEvents) {
         this.calendarEvents = calendarEvents;
         notifyHolders();
     }
@@ -97,14 +96,14 @@ public class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View dayOfMonthView = LayoutInflater.from(parent.getContext()).inflate(monthDayLayoutId, parent, false);
-        MonthDayViewHolder monthDayViewHolder = new MonthDayViewHolder(dayOfMonthView, this);
-        monthDayViewHolders.add(monthDayViewHolder);
-        return monthDayViewHolder;
+        MonthDayHolder monthDayHolder = new MonthDayHolder(dayOfMonthView, this);
+        monthDayHolders.add(monthDayHolder);
+        return monthDayHolder;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((MonthDayViewHolder) holder).bindView(
+        ((MonthDayHolder) holder).bindView(
                 monthDays.get(position),
                 monthIntValue == monthDays.get(position).get(Calendar.MONTH) ?
                         calendarEvents.get(monthDays.get(position).get(Calendar.DAY_OF_MONTH), null) : null,
@@ -124,7 +123,7 @@ public class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (onDateChangeListener != null) onDateChangeListener.onDayChanged(calendar);
     }
 
-    public void notifyMonthSetChanged() {
+    void notifyMonthSetChanged() {
         containsSelected = month.get(Calendar.MONTH) == MonthCalendarHelper.getSelectedDay().get(Calendar.MONTH)
                 && month.get(Calendar.YEAR) == MonthCalendarHelper.getSelectedDay().get(Calendar.YEAR);
         notifyHolders();
@@ -132,9 +131,9 @@ public class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private void notifyHolders() {
         try {
-            if (!monthDayViewHolders.isEmpty()) {
+            if (!monthDayHolders.isEmpty()) {
                 for (int i = 0; i < getItemCount(); ++i) {
-                    onBindViewHolder(monthDayViewHolders.get(i), i);
+                    onBindViewHolder(monthDayHolders.get(i), i);
                 }
             }
         } catch (Exception e) {

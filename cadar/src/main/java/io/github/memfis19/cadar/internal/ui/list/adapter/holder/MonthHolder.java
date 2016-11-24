@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -19,11 +20,12 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import java.util.Calendar;
 
 import io.github.memfis19.cadar.R;
+import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.MonthDecorator;
 
 /**
  * Created by memfis on 9/5/16.
  */
-public class ListItemHolder extends RecyclerView.ViewHolder {
+public class MonthHolder extends RecyclerView.ViewHolder {
 
     private final String DATE_FORMAT = "MMMM yyyy";
 
@@ -33,7 +35,10 @@ public class ListItemHolder extends RecyclerView.ViewHolder {
     private Handler backgroundHandler;
     private Handler uiHandler;
 
+    private RecyclerView recyclerView;
     private View itemView;
+
+    private RecyclerView.OnScrollListener attachedScrollListener;
 
     private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -48,46 +53,63 @@ public class ListItemHolder extends RecyclerView.ViewHolder {
         }
     };
 
-    public RecyclerView.OnScrollListener getScrollListener() {
-        return scrollListener;
-    }
-
-    public ListItemHolder(View itemView, Handler backgroundHandler, Handler uiHandler) {
+    public MonthHolder(RecyclerView recyclerView, View itemView, Handler backgroundHandler, Handler uiHandler) {
         super(itemView);
 
         this.itemView = itemView;
         this.backgroundHandler = backgroundHandler;
         this.uiHandler = uiHandler;
+        this.recyclerView = recyclerView;
 
         monthTitle = (TextView) itemView.findViewById(R.id.month_label);
         monthBackground = (ImageView) itemView.findViewById(R.id.month_background);
     }
 
-    public void bindView(final Calendar month) {
-        monthBackground.setImageDrawable(null);
-        backgroundHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                final Spannable date = new SpannableString(DateFormat.format(DATE_FORMAT, month.getTime()).toString());
+    public void bindView(final Calendar month, @Nullable MonthDecorator monthDecorator) {
+        if (monthDecorator != null) {
+            attachedScrollListener = monthDecorator.getScrollListener();
+            recyclerView.addOnScrollListener(attachedScrollListener);
 
-                final int backgroundId = getBackgroundId(month.get(Calendar.MONTH));
-                uiHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        monthTitle.setText(date);
-                        Glide.with(monthTitle.getContext().getApplicationContext()).load(backgroundId).asBitmap().into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                Drawable background = new BitmapDrawable(monthBackground.getContext().getResources(), resource);
-                                monthBackground.setImageDrawable(background);
-                                monthBackground.setScrollX(0);
-                                monthBackground.setScrollY(0);
-                            }
-                        });
-                    }
-                });
-            }
-        });
+            monthDecorator.onBindMonthView(itemView, month);
+        } else {
+            attachedScrollListener = getScrollListener();
+            recyclerView.addOnScrollListener(attachedScrollListener);
+
+            monthBackground.setImageDrawable(null);
+            backgroundHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    final Spannable date = new SpannableString(DateFormat.format(DATE_FORMAT, month.getTime()).toString());
+
+                    final int backgroundId = getBackgroundId(month.get(Calendar.MONTH));
+                    uiHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            monthTitle.setText(date);
+                            Glide.with(monthTitle.getContext().getApplicationContext()).load(backgroundId).asBitmap().into(new SimpleTarget<Bitmap>() {
+                                @Override
+                                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                    Drawable background = new BitmapDrawable(monthBackground.getContext().getResources(), resource);
+                                    monthBackground.setImageDrawable(background);
+                                    monthBackground.setScrollX(0);
+                                    monthBackground.setScrollY(0);
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    public void detach() {
+        if (monthBackground != null) {
+            recyclerView.removeOnScrollListener(attachedScrollListener);
+        }
+    }
+
+    private RecyclerView.OnScrollListener getScrollListener() {
+        return scrollListener;
     }
 
     private int getBackgroundId(int month) {

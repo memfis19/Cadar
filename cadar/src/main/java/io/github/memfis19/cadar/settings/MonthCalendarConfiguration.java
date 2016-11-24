@@ -10,7 +10,7 @@ import io.github.memfis19.cadar.R;
 import io.github.memfis19.cadar.internal.configuration.BaseCalendarConfiguration;
 import io.github.memfis19.cadar.internal.configuration.BaseCalendarConfigurationBuilder;
 import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.MonthDayDecorator;
-import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.WeekDayTitleDecorator;
+import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.WeekDayDecorator;
 
 /**
  * Created by memfis on 7/14/16.
@@ -21,14 +21,14 @@ public final class MonthCalendarConfiguration extends BaseCalendarConfiguration 
     private int firstDayOfWeek = Calendar.MONDAY;
 
     private MonthDayDecorator monthDayDecorator;
-    private WeekDayTitleDecorator weekDayTitleDecorator;
+    private WeekDayDecorator weekDayDecorator;
     @LayoutRes
     private int
             monthLayoutId = R.layout.month_calendar_event_layout,
             weekTitleLayoutId = R.layout.month_calendar_day_of_week_layout;
 
 
-    protected MonthCalendarConfiguration(@NonNull Context context) {
+    private MonthCalendarConfiguration(@NonNull Context context) {
         super(context);
     }
 
@@ -52,9 +52,9 @@ public final class MonthCalendarConfiguration extends BaseCalendarConfiguration 
             return this;
         }
 
-        public Builder setDayWeekTitleLayout(@LayoutRes int weekTitleLayoutId, WeekDayTitleDecorator weekDayTitleDecorator) {
+        public Builder setDayWeekTitleLayout(@LayoutRes int weekTitleLayoutId, WeekDayDecorator weekDayDecorator) {
             monthCalendarConfiguration.weekTitleLayoutId = weekTitleLayoutId;
-            monthCalendarConfiguration.weekDayTitleDecorator = weekDayTitleDecorator;
+            monthCalendarConfiguration.weekDayDecorator = weekDayDecorator;
             return this;
         }
 
@@ -119,8 +119,8 @@ public final class MonthCalendarConfiguration extends BaseCalendarConfiguration 
         return weekTitleLayoutId;
     }
 
-    public WeekDayTitleDecorator getWeekDayTitleDecorator() {
-        return weekDayTitleDecorator;
+    public WeekDayDecorator getWeekDayDecorator() {
+        return weekDayDecorator;
     }
 
 }

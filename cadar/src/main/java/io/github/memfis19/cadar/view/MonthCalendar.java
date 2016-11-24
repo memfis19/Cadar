@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
+import io.github.memfis19.cadar.CalendarController;
 import io.github.memfis19.cadar.R;
 import io.github.memfis19.cadar.data.entity.Event;
 import io.github.memfis19.cadar.event.CalendarPrepareCallback;
@@ -30,7 +31,6 @@ import io.github.memfis19.cadar.event.OnMonthChangeListener;
 import io.github.memfis19.cadar.internal.helper.ScrollManager;
 import io.github.memfis19.cadar.internal.process.BaseEventsAsyncProcessor;
 import io.github.memfis19.cadar.internal.process.MonthEventsAsyncProcessor;
-import io.github.memfis19.cadar.CalendarController;
 import io.github.memfis19.cadar.internal.ui.month.MonthCalendarHelper;
 import io.github.memfis19.cadar.internal.ui.month.adapter.MonthAdapter;
 import io.github.memfis19.cadar.internal.ui.month.adapter.MonthHandlerThread;
@@ -269,8 +269,8 @@ public class MonthCalendar extends LinearLayout implements ViewPager.OnPageChang
             dayOfWeekTitle = weekDayFormatter.format(workingCalendar.getTime());
         }
 
-        if (monthCalendarConfiguration.getWeekDayTitleDecorator() != null) {
-            monthCalendarConfiguration.getWeekDayTitleDecorator().onBindWeekDayView(weekDayView, calendarWeekDay, dayOfWeekTitle);
+        if (monthCalendarConfiguration.getWeekDayDecorator() != null) {
+            monthCalendarConfiguration.getWeekDayDecorator().onBindWeekDayView(weekDayView, calendarWeekDay, dayOfWeekTitle);
         } else {
             ((TextView) weekDayView).setGravity(Gravity.CENTER);
             ((TextView) weekDayView).setText(dayOfWeekTitle);

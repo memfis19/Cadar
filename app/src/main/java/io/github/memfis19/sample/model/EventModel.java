@@ -48,7 +48,7 @@ public class EventModel implements Event {
 
     @Override
     public Date getOriginalEventStartDate() {
-        return startDate;
+        return originalStartDate;
     }
 
     @Override
@@ -99,5 +99,40 @@ public class EventModel implements Event {
     @Override
     public Boolean isAllDayEvent() {
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.getEventId() == 0) ? 0 : Long.valueOf(this.getEventId()).hashCode());
+        result = prime * result + ((this.getEventStartDate() == null) ? 0 : this.getEventStartDate().hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (((Object) this).getClass() != obj.getClass())
+            return false;
+
+        EventModel other = (EventModel) obj;
+
+        if (this.getEventId() == 0) {
+            if (other.getEventId() != 0)
+                return false;
+        } else if (getEventId() != other.getEventId())
+            return false;
+
+        if (this.getEventStartDate() == null) {
+            if (other.getEventStartDate() != null)
+                return false;
+        } else if (!getEventStartDate().equals(other.getEventStartDate()))
+            return false;
+
+        return true;
     }
 }

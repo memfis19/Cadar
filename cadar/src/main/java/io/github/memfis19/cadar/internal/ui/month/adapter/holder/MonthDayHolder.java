@@ -18,7 +18,7 @@ import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.MonthDayDeco
 /**
  * Created by memfis on 7/13/16.
  */
-public class MonthDayViewHolder extends RecyclerView.ViewHolder {
+public class MonthDayHolder extends RecyclerView.ViewHolder {
 
     private View itemView;
 
@@ -26,7 +26,7 @@ public class MonthDayViewHolder extends RecyclerView.ViewHolder {
     private OnDayChangeListener onDateChangeListener;
     private Calendar day;
 
-    public MonthDayViewHolder(View itemView, final OnDayChangeListener onDateChangeListener) {
+    public MonthDayHolder(View itemView, final OnDayChangeListener onDateChangeListener) {
         super(itemView);
         this.itemView = itemView;
         this.onDateChangeListener = onDateChangeListener;

@@ -14,8 +14,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
-import io.github.memfis19.cadar.R;
 import io.github.memfis19.cadar.data.entity.Event;
 import io.github.memfis19.cadar.data.process.impl.Ical4jEventProcessor;
 import io.github.memfis19.cadar.event.DisplayEventCallback;
@@ -24,9 +25,9 @@ import io.github.memfis19.cadar.event.OnEventClickListener;
 import io.github.memfis19.cadar.event.OnMonthChangeListener;
 import io.github.memfis19.cadar.internal.process.BaseEventsAsyncProcessor;
 import io.github.memfis19.cadar.internal.process.ListEventsAsyncProcessor;
-import io.github.memfis19.cadar.internal.ui.list.adapter.holder.EventItemHolder;
-import io.github.memfis19.cadar.internal.ui.list.adapter.holder.ListItemHolder;
-import io.github.memfis19.cadar.internal.ui.list.adapter.holder.WeekTitleHolder;
+import io.github.memfis19.cadar.internal.ui.list.adapter.holder.EventHolder;
+import io.github.memfis19.cadar.internal.ui.list.adapter.holder.MonthHolder;
+import io.github.memfis19.cadar.internal.ui.list.adapter.holder.WeekHolder;
 import io.github.memfis19.cadar.internal.ui.list.adapter.model.ListItemModel;
 import io.github.memfis19.cadar.internal.ui.list.event.EndlessRecyclerViewScrollListener;
 import io.github.memfis19.cadar.internal.utils.CalendarHelper;
@@ -108,12 +109,11 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     backgroundHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            List<ListItemModel> newItems = new ArrayList<>();
+                            Set<ListItemModel> newItems = new TreeSet<>(getComparator());
                             newItems.addAll(listItemModels);
                             for (Event event : result) {
                                 newItems.add(new ListItemModel(event.getEventStartDate(), event, ListItemModel.EVENT));
                             }
-                            sortListItemsAscending(newItems);
 
                             listItemModels.clear();
                             listItemModels.addAll(newItems);
@@ -322,17 +322,18 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         RecyclerView.ViewHolder holder;
         if (viewType == ListItemModel.EVENT) {
             view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.event_layout, parent, false);
-            holder = new EventItemHolder(view, backgroundHandler, uiHandler, onEventClickListener);
+                    .inflate(configuration.getEventLayoutId(), parent, false);
+
+            holder = new EventHolder(view, backgroundHandler, uiHandler, onEventClickListener);
         } else if (viewType == ListItemModel.WEEK) {
             view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.week_title_layout, parent, false);
-            holder = new WeekTitleHolder(view, backgroundHandler, uiHandler);
+                    .inflate(configuration.getWeekLayoutId(), parent, false);
+            holder = new WeekHolder(view, backgroundHandler, uiHandler);
         } else {
             view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.list_calendar_item_layout, parent, false);
-            holder = new ListItemHolder(view, backgroundHandler, uiHandler);
-            recyclerView.addOnScrollListener(((ListItemHolder) holder).getScrollListener());
+                    .inflate(configuration.getMonthLayoutId(), parent, false);
+
+            holder = new MonthHolder(recyclerView, view, backgroundHandler, uiHandler);
         }
 
         return holder;
@@ -341,11 +342,19 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (getItemViewType(position) == ListItemModel.EVENT) {
-            ((EventItemHolder) holder).bindView((Event) listItemModels.get(position).getValue(), position > 0 ? listItemModels.get(position - 1) : null, position);
+            ((EventHolder) holder).bindView((Event) listItemModels.get(position).getValue(), position > 0 ? listItemModels.get(position - 1) : null, position, configuration.getEventDecorator());
         } else if (getItemViewType(position) == ListItemModel.WEEK) {
-            ((WeekTitleHolder) holder).bindView((Pair<Calendar, Calendar>) listItemModels.get(position).getValue());
+            ((WeekHolder) holder).bindView((Pair<Calendar, Calendar>) listItemModels.get(position).getValue(), configuration.getWeekDecorator());
         } else if (getItemViewType(position) == ListItemModel.MONTH) {
-            ((ListItemHolder) holder).bindView((Calendar) listItemModels.get(position).getValue());
+            ((MonthHolder) holder).bindView((Calendar) listItemModels.get(position).getValue(), configuration.getMonthDecorator());
+        }
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        if (holder instanceof MonthHolder) {
+            ((MonthHolder) holder).detach();
         }
     }
 
@@ -454,11 +463,15 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     private void sortListItemsAscending(List<ListItemModel> eventList) {
-        Collections.sort(eventList, new Comparator<ListItemModel>() {
+        Collections.sort(eventList, getComparator());
+    }
+
+    private Comparator<ListItemModel> getComparator() {
+        return new Comparator<ListItemModel>() {
             @Override
             public int compare(ListItemModel lhs, ListItemModel rhs) {
                 return lhs.compareTo(rhs);
             }
-        });
+        };
     }
 }

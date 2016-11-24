@@ -22,7 +22,6 @@ import io.github.memfis19.cadar.event.OnDayChangeListener;
 import io.github.memfis19.cadar.internal.process.BaseEventsAsyncProcessor;
 import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.MonthDayDecorator;
 import io.github.memfis19.cadar.internal.utils.DateUtils;
-import io.github.memfis19.cadar.view.MonthCalendar;
 
 /**
  * Created by memfis on 7/19/16.
@@ -71,10 +70,10 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
         uiHandler = new Handler(Looper.getMainLooper());
     }
 
-    public MonthAdapter(Context context,
-                        BaseEventsAsyncProcessor eventsAsyncProcessor,
-                        @LayoutRes int monthDayLayoutId,
-                        MonthDayDecorator monthDayDecorator) {
+    MonthAdapter(Context context,
+                 BaseEventsAsyncProcessor eventsAsyncProcessor,
+                 @LayoutRes int monthDayLayoutId,
+                 MonthDayDecorator monthDayDecorator) {
         this.context = context;
         inflater = LayoutInflater.from(context);
 
