@@ -68,7 +68,7 @@ compile 'io.github.memfis19:cadar:0.1.0'
 ## Roadmap
 -Add more documentation;</br>
 -Extend event's recurring settings;</br>
--Add more tools to customize list calendar.
+-Add more tools to customize list calendar UI.
 
 # [LICENSE](/LICENSE.md)
 
