@@ -56,6 +56,9 @@ Events processing implemented in most simple way, each event has start date - da
 
 Month and list calendars limited in time, by defualt they displayed for 3 years. You are able to extend it via calendar configurations. In case if you want to use list and month calendars coupled, then you need to keep the same configuration settings for them.
 
+#### One more important thing to know about event processing
+In some cases during event processing, periods of calculaction may overlap and in this case events can be duplicated, to avoid this please override ```equals()``` and ```hashCode()``` methods in your model class which implements ```Event```. For more details please look at sample source code.
+
 ## How to add to your project?
 ```
 compile 'io.github.memfis19:cadar:0.1.0'
