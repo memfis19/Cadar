@@ -2,15 +2,16 @@
 Android solution which represents month and list calendars views and possibility to display events: just set of events and recurrent as well, but with limitations. For events processing I was using <a href="https://github.com/ical4j/ical4j">Ical4J</a> library.</br>
 <img src="https://github.com/memfis19/Cadar/blob/master/art/list_calendar.png" width="200px" /> <img src="https://github.com/memfis19/Cadar/blob/master/art/month_calendar.png" width="200px" /> <img src="https://github.com/memfis19/Cadar/blob/master/art/interaction_anim.gif" width=200px/>
 
-## Example of most common using
-1. Add to your layout file:
+## Example of most common using:
+##### Add to your layout:
+
 ```
  <io.github.memfis19.cadar.view.MonthCalendar
         android:id="@+id/monthCalendar"
         android:layout_width="match_parent"
         android:layout_height="300dp" />
 ```
-2. Using in code:
+##### Using in code:
 ```
 MonthCalendarConfiguration.Builder builder = new MonthCalendarConfiguration.Builder(this);
 monthCalendar.setCalendarPrepareCallback(this);
@@ -40,7 +41,7 @@ public void onCalendarReady(CalendarController calendar) {
  });
 }
 ```
-3. Don't forget to release calendar:
+##### Don't forget to release calendar:
 ```
 @Override
 protected void onDestroy() {
@@ -65,8 +66,8 @@ compile 'io.github.memfis19:cadar:0.1.0'
 -Not full documentation will be fixed soon.
 
 ## Roadmap
--Add more documentation;
--Extend event's recurring settings;
+-Add more documentation;</br>
+-Extend event's recurring settings;</br>
 -Add more tools to customize list calendar.
 
 # [LICENSE](/LICENSE.md)
