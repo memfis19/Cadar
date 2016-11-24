@@ -61,7 +61,7 @@ In some cases during event processing, periods of calculaction may overlap and i
 
 ## How to add to your project?
 ```
-compile 'io.github.memfis19:cadar:0.1.0'
+compile 'io.github.memfis19:cadar:0.1.1'
 ```
 
 ## Know issue
