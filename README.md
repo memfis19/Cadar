@@ -40,6 +40,14 @@ public void onCalendarReady(CalendarController calendar) {
  });
 }
 ```
+3. Don't forget to release calendar:
+```
+@Override
+protected void onDestroy() {
+   super.onDestroy();
+   monthCalendar.releaseCalendar();
+}
+```
 #### For more specific using please look at sample project.
 
 ## Events processing:
@@ -55,6 +63,11 @@ compile 'io.github.memfis19:cadar:0.1.0'
 ## Know issue
 -Library has not release yet, so it will be extended in future.</br>
 -Not full documentation will be fixed soon.
+
+## Roadmap
+-Add more documentation;
+-Extend event's recurring settings;
+-Add more tools to customize list calendar.
 
 # [LICENSE](/LICENSE.md)
 
