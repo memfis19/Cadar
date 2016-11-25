@@ -73,6 +73,9 @@ compile 'io.github.memfis19:cadar:0.1.1'
 -Extend event's recurring settings;</br>
 -Add more tools to customize list calendar UI.
 
+## Bugs and Feedback
+For bugs, feature requests, and discussion please use <a href="https://github.com/memfis19/Cadar/issues">GitHub Issues</a>.
+
 # [LICENSE](/LICENSE.md)
 
 ###### MIT License
