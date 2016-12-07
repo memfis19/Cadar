@@ -20,6 +20,8 @@ public final class MonthCalendarConfiguration extends BaseCalendarConfiguration 
     @CadarSettings.DayOfWeeks
     private int firstDayOfWeek = Calendar.MONDAY;
 
+    private boolean displayDaysOutOfMonth = true;
+
     private MonthDayDecorator monthDayDecorator;
     private WeekDayDecorator weekDayDecorator;
     @LayoutRes
@@ -55,6 +57,11 @@ public final class MonthCalendarConfiguration extends BaseCalendarConfiguration 
         public Builder setDayWeekTitleLayout(@LayoutRes int weekTitleLayoutId, WeekDayDecorator weekDayDecorator) {
             monthCalendarConfiguration.weekTitleLayoutId = weekTitleLayoutId;
             monthCalendarConfiguration.weekDayDecorator = weekDayDecorator;
+            return this;
+        }
+
+        public Builder setDisplayDaysOutOfMonth(boolean displayDaysOutOfMonth) {
+            monthCalendarConfiguration.displayDaysOutOfMonth = displayDaysOutOfMonth;
             return this;
         }
 
@@ -123,4 +130,7 @@ public final class MonthCalendarConfiguration extends BaseCalendarConfiguration 
         return weekDayDecorator;
     }
 
+    public boolean isDisplayDaysOutOfMonth() {
+        return displayDaysOutOfMonth;
+    }
 }

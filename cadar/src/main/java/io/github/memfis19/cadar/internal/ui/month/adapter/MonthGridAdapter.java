@@ -37,6 +37,7 @@ class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
 
     private boolean containsToday = false;
     private boolean containsSelected = false;
+    private boolean displayDaysOutOfMonth = true;
 
     @LayoutRes
     private int monthDayLayoutId;
@@ -44,6 +45,11 @@ class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
 
     private BaseEventsAsyncProcessor eventsAsyncProcessor;
     private OnDayChangeListener onDateChangeListener;
+
+    MonthGridAdapter(Calendar month, List<Calendar> monthItems, boolean displayDaysOutOfMonth) {
+        this(month, monthItems);
+        this.displayDaysOutOfMonth = displayDaysOutOfMonth;
+    }
 
     MonthGridAdapter(Calendar month, List<Calendar> monthItems) {
         this.month = month;
@@ -96,7 +102,7 @@ class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View dayOfMonthView = LayoutInflater.from(parent.getContext()).inflate(monthDayLayoutId, parent, false);
-        MonthDayHolder monthDayHolder = new MonthDayHolder(dayOfMonthView, this);
+        MonthDayHolder monthDayHolder = new MonthDayHolder(dayOfMonthView, displayDaysOutOfMonth, this);
         monthDayHolders.add(monthDayHolder);
         return monthDayHolder;
     }
@@ -105,6 +111,7 @@ class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ((MonthDayHolder) holder).bindView(
                 monthDays.get(position),
+                month,
                 monthIntValue == monthDays.get(position).get(Calendar.MONTH) ?
                         calendarEvents.get(monthDays.get(position).get(Calendar.DAY_OF_MONTH), null) : null,
                 containsSelected && DateUtils.isSameDay(MonthCalendarHelper.getSelectedDay(), monthDays.get(position)),

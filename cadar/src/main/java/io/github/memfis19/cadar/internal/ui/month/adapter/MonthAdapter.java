@@ -22,6 +22,7 @@ import io.github.memfis19.cadar.event.OnDayChangeListener;
 import io.github.memfis19.cadar.internal.process.BaseEventsAsyncProcessor;
 import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.MonthDayDecorator;
 import io.github.memfis19.cadar.internal.utils.DateUtils;
+import io.github.memfis19.cadar.settings.MonthCalendarConfiguration;
 
 /**
  * Created by memfis on 7/19/16.
@@ -36,6 +37,7 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
 
     private Context context;
     private LayoutInflater inflater;
+    private MonthCalendarConfiguration monthCalendarConfiguration;
 
     private MonthHandlerThread monthHandlerThread;
     private Handler backgroundHandler;
@@ -57,12 +59,13 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
     public MonthAdapter(Context context,
                         MonthHandlerThread monthHandlerThread,
                         BaseEventsAsyncProcessor eventsAsyncProcessor,
-                        @LayoutRes int monthDayLayoutId,
-                        MonthDayDecorator monthDayDecorator,
-                        Calendar initialDate) {
+                        MonthCalendarConfiguration monthCalendarConfiguration) {
 
-        this(context, eventsAsyncProcessor, monthDayLayoutId, monthDayDecorator);
-        this.initialDate = initialDate;
+        this(context, eventsAsyncProcessor, monthCalendarConfiguration.getMonthLayoutId(), monthCalendarConfiguration.getMonthDayDecorator());
+
+        this.monthCalendarConfiguration = monthCalendarConfiguration;
+
+        this.initialDate = monthCalendarConfiguration.getInitialDay();
         this.monthHandlerThread = monthHandlerThread;
         this.monthHandlerThread.setAdapterPrepareListener(this);
 
@@ -180,7 +183,7 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
 
     @Override
     public void onReadyAdapter(Calendar month, List<Calendar> monthDays, RecyclerView recyclerView) {
-        MonthGridAdapter monthGridAdapter = new MonthGridAdapter(month, monthDays);
+        MonthGridAdapter monthGridAdapter = new MonthGridAdapter(month, monthDays, monthCalendarConfiguration.isDisplayDaysOutOfMonth());
 
         monthGridAdapter.setOnDateChangeListener(this);
         monthGridAdapter.setEventsAsyncProcessor(eventsAsyncProcessor);

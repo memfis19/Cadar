@@ -40,6 +40,7 @@ public class MonthCalendarActivity extends AppCompatActivity implements Calendar
         monthCalendar = (MonthCalendar) findViewById(R.id.monthCalendar);
 
         MonthCalendarConfiguration.Builder builder = new MonthCalendarConfiguration.Builder(this);
+        builder.setDisplayDaysOutOfMonth(false);
         monthCalendar.setCalendarPrepareCallback(this);
         monthCalendar.prepareCalendar(builder.build());
 
