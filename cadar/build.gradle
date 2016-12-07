@@ -132,7 +132,7 @@ bintray {
         version {
             name = PUBLISH_VERSION
             vcsTag = PUBLISH_VERSION
-            desc = 'Initial commit.'
+            desc = 'Added hide/show dates of month.'
             released = new Date()
 
         }
