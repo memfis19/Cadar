@@ -1,4 +1,8 @@
 # Cadar
+
+[ ![Download](https://api.bintray.com/packages/m-e-m-f-i-s/io.github.memfis19/cadar/images/download.svg) ](https://bintray.com/m-e-m-f-i-s/io.github.memfis19/cadar/_latestVersion)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Cadar-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/4783)
+
 Android solution which represents month and list calendars views and possibility to display events: just set of events and recurrent as well, but with limitations. For events processing I was using <a href="https://github.com/ical4j/ical4j">Ical4J</a> library.</br>
 <img src="https://github.com/memfis19/Cadar/blob/master/art/list_calendar.png" width="200px" /> <img src="https://github.com/memfis19/Cadar/blob/master/art/month_calendar.png" width="200px" /> <img src="https://github.com/memfis19/Cadar/blob/master/art/interaction_anim.gif" width=200px/>
 
