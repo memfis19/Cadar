@@ -1,8 +1,6 @@
 package io.github.memfis19.cadar.internal.ui.list.adapter.holder;
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -13,9 +11,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 
@@ -86,15 +83,33 @@ public class MonthHolder extends RecyclerView.ViewHolder {
                         @Override
                         public void run() {
                             monthTitle.setText(date);
-                            Glide.with(monthTitle.getContext().getApplicationContext()).load(backgroundId).asBitmap().into(new SimpleTarget<Bitmap>() {
+
+                            Picasso.with(monthTitle.getContext().getApplicationContext()).load(backgroundId).into(monthBackground, new Callback() {
                                 @Override
-                                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                    Drawable background = new BitmapDrawable(monthBackground.getContext().getResources(), resource);
-                                    monthBackground.setImageDrawable(background);
-                                    monthBackground.setScrollX(0);
-                                    monthBackground.setScrollY(0);
+                                public void onSuccess() {
+                                    if (Build.VERSION.SDK_INT > 13) {
+                                        monthBackground.setScrollX(0);
+                                        monthBackground.setScrollY(0);
+                                    }
+                                }
+
+                                @Override
+                                public void onError() {
+
                                 }
                             });
+//                            Glide.with(monthTitle.getContext().getApplicationContext()).load(backgroundId).asBitmap().into(new SimpleTarget<Bitmap>() {
+//                                @Override
+//                                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+//                                    Drawable background = new BitmapDrawable(monthBackground.getContext().getResources(), resource);
+//                                    monthBackground.setImageDrawable(background);
+//
+//                                    if (Build.VERSION.SDK_INT > 13) {
+//                                        monthBackground.setScrollX(0);
+//                                        monthBackground.setScrollY(0);
+//                                    }
+//                                }
+//                            });
                         }
                     });
                 }

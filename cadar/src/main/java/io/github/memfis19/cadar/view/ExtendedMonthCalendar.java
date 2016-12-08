@@ -18,8 +18,6 @@ import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import org.apache.commons.lang.WordUtils;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -35,6 +33,7 @@ import io.github.memfis19.cadar.event.OnMonthChangeListener;
 import io.github.memfis19.cadar.internal.ui.events.TimeOutClickListener;
 import io.github.memfis19.cadar.internal.utils.DateUtils;
 import io.github.memfis19.cadar.internal.utils.ViewUtils;
+import io.github.memfis19.cadar.internal.utils.WordUtils;
 import io.github.memfis19.cadar.settings.MonthCalendarConfiguration;
 
 /**

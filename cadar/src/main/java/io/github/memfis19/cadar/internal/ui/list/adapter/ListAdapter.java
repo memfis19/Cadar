@@ -18,7 +18,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import io.github.memfis19.cadar.data.entity.Event;
-import io.github.memfis19.cadar.data.process.impl.Ical4jEventProcessor;
 import io.github.memfis19.cadar.event.DisplayEventCallback;
 import io.github.memfis19.cadar.event.OnDayChangeListener;
 import io.github.memfis19.cadar.event.OnEventClickListener;
@@ -90,7 +89,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         this.dayChangeListener = dayChangeListener;
 
         listEventsAsyncProcessor = new ListEventsAsyncProcessor(configuration.isEventProcessingEnabled(), configuration.getEventProcessor());
-        listEventsAsyncProcessor.setEventProcessor(new Ical4jEventProcessor());
+        listEventsAsyncProcessor.setEventProcessor(configuration.getEventProcessor());
         listEventsAsyncProcessor.setEvents(eventList);
         listEventsAsyncProcessor.start();
         listEventsAsyncProcessor.getLooper();

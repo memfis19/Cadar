@@ -5,7 +5,6 @@ import java.util.List;
 
 import io.github.memfis19.cadar.data.entity.Event;
 import io.github.memfis19.cadar.data.factory.EventFactory;
-import io.github.memfis19.cadar.settings.CadarSettings;
 
 /**
  * Created by memfis on 3/26/15.

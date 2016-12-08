@@ -1,9 +1,9 @@
-package io.github.memfis19.cadar.data.process.impl;
+package io.github.memfis19.sample.process;
 
 import android.util.Log;
 
 import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentFactory;
+import net.fortuna.ical4j.model.ComponentFactoryImpl;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.Dur;
 import net.fortuna.ical4j.model.PropertyList;
@@ -17,17 +17,17 @@ import io.github.memfis19.cadar.internal.utils.SyncUtils;
 /**
  * Created by memfis on 4/2/15.
  */
-public class EventComponentCreator {
+class EventComponentCreator {
 
     private final static String TAG = "EventComponentCreator";
 
     private Event event;
 
-    public EventComponentCreator(Event event) {
+    EventComponentCreator(Event event) {
         this.event = event;
     }
 
-    public Component createEventComponent(ComponentFactory componentFactory) {
+    Component createEventComponent(ComponentFactoryImpl componentFactory) {
         return componentFactory.createComponent(Component.VEVENT, createEventPropertyList());
     }
 

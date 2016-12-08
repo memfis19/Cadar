@@ -9,7 +9,7 @@ import java.util.Locale;
 
 import io.github.memfis19.cadar.data.factory.EventFactory;
 import io.github.memfis19.cadar.data.process.IEventProcessor;
-import io.github.memfis19.cadar.data.process.impl.Ical4jEventProcessor;
+import io.github.memfis19.cadar.data.process.impl.CadarEventProcessor;
 import io.github.memfis19.cadar.internal.utils.DateUtils;
 
 /**
@@ -22,7 +22,7 @@ public abstract class BaseCalendarConfigurationBuilder<T> {
     protected Calendar initialDay = DateUtils.getCalendarInstance();
 
     protected boolean eventProcessingEnabled = false;
-    protected IEventProcessor eventProcessor = new Ical4jEventProcessor();
+    protected IEventProcessor eventProcessor = new CadarEventProcessor();
     protected EventFactory eventFactory;
 
     protected boolean weekDayTitleTranslationEnabled = false;

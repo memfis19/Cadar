@@ -11,6 +11,7 @@ import java.util.List;
 
 import io.github.memfis19.cadar.CalendarController;
 import io.github.memfis19.cadar.data.entity.Event;
+import io.github.memfis19.cadar.data.factory.EventFactory;
 import io.github.memfis19.cadar.event.CalendarPrepareCallback;
 import io.github.memfis19.cadar.event.DisplayEventCallback;
 import io.github.memfis19.cadar.event.OnDayChangeListener;
@@ -18,6 +19,7 @@ import io.github.memfis19.cadar.event.OnMonthChangeListener;
 import io.github.memfis19.cadar.settings.MonthCalendarConfiguration;
 import io.github.memfis19.cadar.view.MonthCalendar;
 import io.github.memfis19.sample.model.EventModel;
+import io.github.memfis19.sample.process.Ical4jEventProcessor;
 
 /**
  * Created by memfis on 11/23/16.
@@ -41,6 +43,15 @@ public class MonthCalendarActivity extends AppCompatActivity implements Calendar
 
         MonthCalendarConfiguration.Builder builder = new MonthCalendarConfiguration.Builder(this);
         builder.setDisplayDaysOutOfMonth(false);
+        builder.setEventProcessingEnabled(true);
+        builder.setEventProcessor(new Ical4jEventProcessor());
+        builder.setEventFactory(new EventFactory() {
+            @Override
+            public Event createEventCopy(Event event) {
+                return new EventModel(event);
+            }
+        });
+
         monthCalendar.setCalendarPrepareCallback(this);
         monthCalendar.prepareCalendar(builder.build());
 

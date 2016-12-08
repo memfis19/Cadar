@@ -9,7 +9,7 @@ import java.util.Locale;
 
 import io.github.memfis19.cadar.data.factory.EventFactory;
 import io.github.memfis19.cadar.data.process.IEventProcessor;
-import io.github.memfis19.cadar.data.process.impl.Ical4jEventProcessor;
+import io.github.memfis19.cadar.data.process.impl.CadarEventProcessor;
 import io.github.memfis19.cadar.internal.utils.DateUtils;
 
 /**
@@ -18,13 +18,13 @@ import io.github.memfis19.cadar.internal.utils.DateUtils;
 public class BaseCalendarConfiguration {
 
     protected Context context;
-    protected Locale locale = Locale.getDefault();
+    private Locale locale = Locale.getDefault();
     protected Calendar initialDay = DateUtils.getCalendarInstance();
-    protected int maxYearsToDisplay = 10;
-    protected int numberOfYearsBeforeCurrent = 1;
+    private int maxYearsToDisplay = 10;
+    private int numberOfYearsBeforeCurrent = 1;
 
     protected boolean eventProcessingEnabled = false;
-    protected IEventProcessor eventProcessor = new Ical4jEventProcessor();
+    protected IEventProcessor eventProcessor = new CadarEventProcessor();
     protected EventFactory eventFactory;
 
     protected boolean weekDayTitleTranslationEnabled = false;

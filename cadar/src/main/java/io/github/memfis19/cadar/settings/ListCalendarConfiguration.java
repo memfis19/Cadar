@@ -66,6 +66,19 @@ public class ListCalendarConfiguration extends BaseCalendarConfiguration {
 
         @Override
         public ListCalendarConfiguration build() {
+            if (context == null)
+                throw new NullPointerException("Passed activity to month calendar configuration can't be null.");
+
+            if (eventProcessingEnabled && eventProcessor == null)
+                throw new IllegalStateException("Configuration set to process events. But event processor not passed or null.");
+            listCalendarConfiguration.eventProcessingEnabled = eventProcessingEnabled;
+            listCalendarConfiguration.eventProcessor = eventProcessor;
+
+            if (eventProcessingEnabled && eventFactory == null)
+                throw new NullPointerException("Event factory is null. Please setup it.");
+            listCalendarConfiguration.eventFactory = eventFactory;
+            listCalendarConfiguration.eventProcessor.setEventFactory(listCalendarConfiguration.eventFactory);
+
             return listCalendarConfiguration;
         }
     }

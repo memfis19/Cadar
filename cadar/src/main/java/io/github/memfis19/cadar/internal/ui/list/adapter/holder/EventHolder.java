@@ -3,6 +3,7 @@ package io.github.memfis19.cadar.internal.ui.list.adapter.holder;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -16,9 +17,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.text.SimpleDateFormat;
 
@@ -161,13 +161,23 @@ public class EventHolder extends RecyclerView.ViewHolder {
             updateSyncButton();
 
             if (!TextUtils.isEmpty(event.getEventIconUrl())) {
-                Glide.with(title.getContext()).load(event.getEventIconUrl()).asBitmap().into(new SimpleTarget<Bitmap>() {
+                Picasso.with(title.getContext()).load(event.getEventIconUrl()).into(new Target() {
                     @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        Drawable drawable = new BitmapDrawable(title.getContext().getResources(), resource);
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        Drawable drawable = new BitmapDrawable(title.getContext().getResources(), bitmap);
                         double multiplier = (double) drawable.getIntrinsicWidth() / drawable.getIntrinsicHeight();
                         drawable.setBounds(0, 0, (int) (smileSizePx * multiplier), smileSizePx);
                         title.setCompoundDrawables(drawable, null, null, null);
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) {
+
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+
                     }
                 });
             } else title.setCompoundDrawables(null, null, null, null);
@@ -193,8 +203,7 @@ public class EventHolder extends RecyclerView.ViewHolder {
 
     private void updateSyncButton() {
         if (event.getCalendarId() == null || event.getCalendarId() == 0)
-            synchronizeButton.setAlpha(0.4f);
-        else
-            synchronizeButton.setAlpha(1f);
+            if (Build.VERSION.SDK_INT > 10) synchronizeButton.setAlpha(0.4f);
+            else if (Build.VERSION.SDK_INT > 10) synchronizeButton.setAlpha(1f);
     }
 }

@@ -1,7 +1,7 @@
-package io.github.memfis19.cadar.data.process.impl;
+package io.github.memfis19.sample.process;
 
 import net.fortuna.ical4j.model.Component;
-import net.fortuna.ical4j.model.ComponentFactory;
+import net.fortuna.ical4j.model.ComponentFactoryImpl;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.PeriodList;
@@ -32,15 +32,16 @@ public class Ical4jEventProcessor implements IEventProcessor {
 
     private List<Event> eventsToProcess;
     private EventFactory eventFactory;
-    private ComponentFactory componentFactory;
+    private ComponentFactoryImpl componentFactory;
 
     public Ical4jEventProcessor() {
-        this.componentFactory = ComponentFactory.getInstance();
+        this.componentFactory = ComponentFactoryImpl.getInstance();
     }
 
     public Ical4jEventProcessor(List<Event> eventsToProcess) {
         this.eventsToProcess = eventsToProcess;
-        this.componentFactory = ComponentFactory.getInstance();
+
+        this.componentFactory = ComponentFactoryImpl.getInstance();
     }
 
     @Override
@@ -125,7 +126,7 @@ public class Ical4jEventProcessor implements IEventProcessor {
 
         List<Event> recurrentEventList = new ArrayList<>(periodListForRecurrentEvent.size());
 
-        for (Period period : (Set<Period>) periodListForRecurrentEvent) {
+        for (Period period : periodListForRecurrentEvent) {
 
             org.joda.time.DateTime dateTime = new org.joda.time.DateTime(new Date(period.getStart().getTime()), DateTimeZone.UTC);
 
