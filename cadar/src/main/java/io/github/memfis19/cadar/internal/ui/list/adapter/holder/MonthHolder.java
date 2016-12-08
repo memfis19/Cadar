@@ -98,18 +98,6 @@ public class MonthHolder extends RecyclerView.ViewHolder {
 
                                 }
                             });
-//                            Glide.with(monthTitle.getContext().getApplicationContext()).load(backgroundId).asBitmap().into(new SimpleTarget<Bitmap>() {
-//                                @Override
-//                                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-//                                    Drawable background = new BitmapDrawable(monthBackground.getContext().getResources(), resource);
-//                                    monthBackground.setImageDrawable(background);
-//
-//                                    if (Build.VERSION.SDK_INT > 13) {
-//                                        monthBackground.setScrollX(0);
-//                                        monthBackground.setScrollY(0);
-//                                    }
-//                                }
-//                            });
                         }
                     });
                 }
