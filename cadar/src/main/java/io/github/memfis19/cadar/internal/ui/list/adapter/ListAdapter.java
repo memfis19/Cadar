@@ -378,10 +378,18 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public int getDatePosition(Calendar calendar) {
         long time = calendar.getTimeInMillis();
         long itemTime = 0;
+        long nextItemTime = 0;
         int scrollPosition = 0;
+
         for (int i = 0; i < listItemModels.size(); ++i) {
             itemTime = listItemModels.get(i).getCalendar().getTimeInMillis();
-            if (time <= itemTime) {
+
+            if (i + 1 < listItemModels.size())
+                nextItemTime = listItemModels.get(i + 1).getCalendar().getTimeInMillis();
+            else
+                nextItemTime = listItemModels.get(listItemModels.size() - 1).getCalendar().getTimeInMillis();
+
+            if (time >= itemTime && time < nextItemTime) {
                 scrollPosition = i;
                 break;
             }

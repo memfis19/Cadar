@@ -3,8 +3,8 @@ apply plugin: 'com.android.application'
 ext {
     PUBLISH_GROUP_ID = 'io.github.memfis19'
     PUBLISH_ARTIFACT_ID = 'cadar'
-    PUBLISH_VERSION = '1.1.2'
-    PUBLISH_VERSION_CODE = 4
+    PUBLISH_VERSION = '1.2.0'
+    PUBLISH_VERSION_CODE = 5
     SUPPORT_VERSION = '25.0.1'
     TARGET_SDK = 24
     MIN_SDK = 10
@@ -22,6 +22,7 @@ android {
         versionCode PUBLISH_VERSION_CODE
         versionName PUBLISH_VERSION
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -40,6 +41,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:multidex:1.0.1'
     compile 'org.mnode.ical4j:ical4j:2.0.0'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
