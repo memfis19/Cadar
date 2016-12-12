@@ -68,7 +68,7 @@ In some cases during event processing, periods of calculaction may overlap and i
 compile 'io.github.memfis19:cadar:0.2.0'
 ```
 
-## Know issue
+## Know issues
 -Library has not release yet, so it will be extended in future.</br>
 -Not full documentation will be fixed soon.
 
