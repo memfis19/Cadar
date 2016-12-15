@@ -14,6 +14,7 @@ import io.github.memfis19.cadar.data.entity.Event;
 import io.github.memfis19.cadar.event.OnDayChangeListener;
 import io.github.memfis19.cadar.internal.ui.month.MonthCalendarHelper;
 import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.MonthDayDecorator;
+import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.factory.MonthDayDecoratorFactory;
 import io.github.memfis19.cadar.internal.utils.DateUtils;
 
 /**
@@ -27,8 +28,14 @@ public class MonthDayHolder extends RecyclerView.ViewHolder {
     private Calendar day;
     private boolean displayDaysOutOfMonth = true;
 
-    public MonthDayHolder(View itemView, boolean displayDaysOutOfMonth, final OnDayChangeListener onDateChangeListener) {
+    private MonthDayDecorator monthDayDecorator;
+
+    public MonthDayHolder(View itemView,
+                          boolean displayDaysOutOfMonth,
+                          final OnDayChangeListener onDateChangeListener,
+                          MonthDayDecoratorFactory monthDayDecoratorFactory) {
         super(itemView);
+
         this.itemView = itemView;
         this.displayDaysOutOfMonth = displayDaysOutOfMonth;
 
@@ -41,14 +48,19 @@ public class MonthDayHolder extends RecyclerView.ViewHolder {
                 }
             }
         });
+
+        if (monthDayDecoratorFactory != null) {
+            monthDayDecorator = monthDayDecoratorFactory.createMonthDayDecorator(itemView);
+        } else {
+            dayNumberView = (TextView) itemView.findViewById(R.id.month_view_item_content);
+        }
     }
 
     public void bindView(final Calendar monthDay,
                          final Calendar month,
                          @Nullable List<Event> eventList,
                          boolean isSelected,
-                         boolean isToday,
-                         @Nullable MonthDayDecorator monthDayDecorator) {
+                         boolean isToday) {
 
         day = monthDay;
 
@@ -63,7 +75,6 @@ public class MonthDayHolder extends RecyclerView.ViewHolder {
                 } else itemView.setVisibility(View.VISIBLE);
             }
 
-            dayNumberView = (TextView) itemView.findViewById(R.id.month_view_item_content);
             dayNumberView.setText(String.valueOf(monthDay.get(Calendar.DAY_OF_MONTH)));
 
             if (isSelected) {

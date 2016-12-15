@@ -1,10 +1,7 @@
 package io.github.memfis19.sample;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -16,7 +13,6 @@ import io.github.memfis19.cadar.event.CalendarPrepareCallback;
 import io.github.memfis19.cadar.event.DisplayEventCallback;
 import io.github.memfis19.cadar.event.OnDayChangeListener;
 import io.github.memfis19.cadar.event.OnMonthChangeListener;
-import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.MonthDayDecorator;
 import io.github.memfis19.cadar.internal.utils.DateUtils;
 import io.github.memfis19.cadar.settings.ListCalendarConfiguration;
 import io.github.memfis19.cadar.settings.MonthCalendarConfiguration;
@@ -46,23 +42,6 @@ public class MonthListCalendarInteractionActivity extends AppCompatActivity impl
         listCalendar = (ListCalendar) findViewById(R.id.listCalendar);
 
         MonthCalendarConfiguration.Builder builder = new MonthCalendarConfiguration.Builder(this);
-        builder.setMonthDayLayout(R.layout.custom_month_day_layout, new MonthDayDecorator() {
-            @Override
-            public void onBindDayView(View view, Calendar monthDay, Calendar month, List<Event> eventList, boolean isSelected, boolean isToday) {
-                if (!DateUtils.isSameMonth(month, monthDay)) {
-                    view.setVisibility(View.GONE);
-                    return;
-                } else view.setVisibility(View.VISIBLE);
-                TextView day = (TextView) view.findViewById(R.id.day_view);
-                day.setText(String.valueOf(monthDay.get(Calendar.DAY_OF_MONTH)));
-                day.setTextColor(Color.WHITE);
-
-                view.setBackgroundColor(Color.TRANSPARENT);
-                if (isToday) view.setBackgroundColor(Color.RED);
-                if (isSelected) view.setBackgroundColor(Color.MAGENTA);
-            }
-        });
-
         ListCalendarConfiguration.Builder listBuilder = new ListCalendarConfiguration.Builder(this);
 
         monthCalendar.setCalendarPrepareCallback(this);

@@ -1,8 +1,11 @@
 package io.github.memfis19.sample;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -16,6 +19,9 @@ import io.github.memfis19.cadar.event.CalendarPrepareCallback;
 import io.github.memfis19.cadar.event.DisplayEventCallback;
 import io.github.memfis19.cadar.event.OnDayChangeListener;
 import io.github.memfis19.cadar.event.OnMonthChangeListener;
+import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.MonthDayDecorator;
+import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.factory.MonthDayDecoratorFactory;
+import io.github.memfis19.cadar.internal.utils.DateUtils;
 import io.github.memfis19.cadar.settings.MonthCalendarConfiguration;
 import io.github.memfis19.cadar.view.MonthCalendar;
 import io.github.memfis19.sample.model.EventModel;
@@ -41,6 +47,13 @@ public class MonthCalendarActivity extends AppCompatActivity implements Calendar
 
         monthCalendar = (MonthCalendar) findViewById(R.id.monthCalendar);
 
+        MonthDayDecoratorFactory monthDayDecoratorFactory = new MonthDayDecoratorFactory() {
+            @Override
+            public MonthDayDecorator createMonthDayDecorator(View parent) {
+                return new MonthDayDecoratorImpl(parent);
+            }
+        };
+
         MonthCalendarConfiguration.Builder builder = new MonthCalendarConfiguration.Builder(this);
         builder.setDisplayDaysOutOfMonth(false);
         builder.setEventProcessingEnabled(true);
@@ -51,6 +64,7 @@ public class MonthCalendarActivity extends AppCompatActivity implements Calendar
                 return new EventModel(event);
             }
         });
+        builder.setMonthDayLayout(R.layout.custom_month_day_layout, monthDayDecoratorFactory);
 
         monthCalendar.setCalendarPrepareCallback(this);
         monthCalendar.prepareCalendar(builder.build());
@@ -67,6 +81,32 @@ public class MonthCalendarActivity extends AppCompatActivity implements Calendar
                 Toast.makeText(MonthCalendarActivity.this, calendar.getTime().toString(), Toast.LENGTH_SHORT).show();
             }
         });
+
+
+    }
+
+    private class MonthDayDecoratorImpl implements MonthDayDecorator {
+
+        private TextView day;
+
+        public MonthDayDecoratorImpl(View parent) {
+            day = (TextView) parent.findViewById(R.id.day_view);
+        }
+
+        @Override
+        public void onBindDayView(View view, Calendar monthDay, Calendar month, List<Event> eventList, boolean isSelected, boolean isToday) {
+            if (!DateUtils.isSameMonth(month, monthDay)) {
+                view.setVisibility(View.GONE);
+                return;
+            } else view.setVisibility(View.VISIBLE);
+
+            day.setText(String.valueOf(monthDay.get(Calendar.DAY_OF_MONTH)));
+            day.setTextColor(Color.WHITE);
+
+            view.setBackgroundColor(Color.TRANSPARENT);
+            if (isToday) view.setBackgroundColor(Color.RED);
+            if (isSelected) view.setBackgroundColor(Color.MAGENTA);
+        }
     }
 
     @Override

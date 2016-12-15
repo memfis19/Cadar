@@ -20,7 +20,7 @@ import io.github.memfis19.cadar.R;
 import io.github.memfis19.cadar.data.entity.Event;
 import io.github.memfis19.cadar.event.OnDayChangeListener;
 import io.github.memfis19.cadar.internal.process.BaseEventsAsyncProcessor;
-import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.MonthDayDecorator;
+import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.factory.MonthDayDecoratorFactory;
 import io.github.memfis19.cadar.internal.utils.DateUtils;
 import io.github.memfis19.cadar.settings.MonthCalendarConfiguration;
 
@@ -48,7 +48,7 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
 
     @LayoutRes
     private int monthDayLayoutId;
-    private MonthDayDecorator monthDayDecorator;
+    private MonthDayDecoratorFactory monthDayDecoratorFactory;
 
     private List<RecyclerView> monthFragments = new ArrayList<>();
 
@@ -61,7 +61,7 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
                         BaseEventsAsyncProcessor eventsAsyncProcessor,
                         MonthCalendarConfiguration monthCalendarConfiguration) {
 
-        this(context, eventsAsyncProcessor, monthCalendarConfiguration.getMonthLayoutId(), monthCalendarConfiguration.getMonthDayDecorator());
+        this(context, eventsAsyncProcessor, monthCalendarConfiguration.getMonthLayoutId(), monthCalendarConfiguration.getMonthDayDecoratorFactory());
 
         this.monthCalendarConfiguration = monthCalendarConfiguration;
 
@@ -76,13 +76,13 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
     MonthAdapter(Context context,
                  BaseEventsAsyncProcessor eventsAsyncProcessor,
                  @LayoutRes int monthDayLayoutId,
-                 MonthDayDecorator monthDayDecorator) {
+                 MonthDayDecoratorFactory monthDayDecoratorFactory) {
         this.context = context;
         inflater = LayoutInflater.from(context);
 
         this.eventsAsyncProcessor = eventsAsyncProcessor;
         this.monthDayLayoutId = monthDayLayoutId;
-        this.monthDayDecorator = monthDayDecorator;
+        this.monthDayDecoratorFactory = monthDayDecoratorFactory;
 
         this.eventsAsyncProcessor.setEventsProcessorListener(this);
     }
@@ -188,7 +188,7 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
         monthGridAdapter.setOnDateChangeListener(this);
         monthGridAdapter.setEventsAsyncProcessor(eventsAsyncProcessor);
         monthGridAdapter.setMonthDayLayoutId(monthDayLayoutId);
-        monthGridAdapter.setMonthDayDecorator(monthDayDecorator);
+        monthGridAdapter.setMonthDayDecoratorFactory(monthDayDecoratorFactory);
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 7);
         recyclerView.setLayoutManager(gridLayoutManager);

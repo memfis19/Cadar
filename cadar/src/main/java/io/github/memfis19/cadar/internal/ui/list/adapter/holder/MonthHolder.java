@@ -2,7 +2,6 @@ package io.github.memfis19.cadar.internal.ui.list.adapter.holder;
 
 import android.os.Build;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -18,6 +17,7 @@ import java.util.Calendar;
 
 import io.github.memfis19.cadar.R;
 import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.MonthDecorator;
+import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.factory.MonthDecoratorFactory;
 
 /**
  * Created by memfis on 9/5/16.
@@ -37,6 +37,8 @@ public class MonthHolder extends RecyclerView.ViewHolder {
 
     private RecyclerView.OnScrollListener attachedScrollListener;
 
+    private MonthDecorator monthDecorator;
+
     private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -50,7 +52,11 @@ public class MonthHolder extends RecyclerView.ViewHolder {
         }
     };
 
-    public MonthHolder(RecyclerView recyclerView, View itemView, Handler backgroundHandler, Handler uiHandler) {
+    public MonthHolder(RecyclerView recyclerView,
+                       View itemView,
+                       Handler backgroundHandler,
+                       Handler uiHandler,
+                       MonthDecoratorFactory monthDecoratorFactory) {
         super(itemView);
 
         this.itemView = itemView;
@@ -58,11 +64,15 @@ public class MonthHolder extends RecyclerView.ViewHolder {
         this.uiHandler = uiHandler;
         this.recyclerView = recyclerView;
 
-        monthTitle = (TextView) itemView.findViewById(R.id.month_label);
-        monthBackground = (ImageView) itemView.findViewById(R.id.month_background);
+        if (monthDecoratorFactory != null) {
+            monthDecorator = monthDecoratorFactory.createMonthDecorator(itemView);
+        } else {
+            monthTitle = (TextView) itemView.findViewById(R.id.month_label);
+            monthBackground = (ImageView) itemView.findViewById(R.id.month_background);
+        }
     }
 
-    public void bindView(final Calendar month, @Nullable MonthDecorator monthDecorator) {
+    public void bindView(final Calendar month) {
         if (monthDecorator != null) {
             attachedScrollListener = monthDecorator.getScrollListener();
             recyclerView.addOnScrollListener(attachedScrollListener);

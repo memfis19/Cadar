@@ -5,7 +5,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
@@ -27,6 +26,7 @@ import io.github.memfis19.cadar.data.entity.Event;
 import io.github.memfis19.cadar.event.OnEventClickListener;
 import io.github.memfis19.cadar.internal.ui.events.TimeOutClickListener;
 import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.EventDecorator;
+import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.factory.EventDecoratorFactory;
 import io.github.memfis19.cadar.internal.ui.list.adapter.model.ListItemModel;
 import io.github.memfis19.cadar.internal.utils.DateUtils;
 import io.github.memfis19.cadar.internal.utils.ViewUtils;
@@ -59,34 +59,14 @@ public class EventHolder extends RecyclerView.ViewHolder {
     private Event event;
     private int position;
 
-    public EventHolder(View itemView, Handler backgroundHandler, Handler uiHandler, final OnEventClickListener onEventClickListener) {
+    private EventDecorator eventDecorator;
+
+    public EventHolder(View itemView,
+                       Handler backgroundHandler,
+                       Handler uiHandler,
+                       final OnEventClickListener onEventClickListener,
+                       EventDecoratorFactory eventDecoratorFactory) {
         super(itemView);
-        if (syncEditIconsSizePx == 0)
-            syncEditIconsSizePx = ViewUtils.convertDipToPixels(20, itemView.getContext());
-
-        if (smileSizePx == 0)
-            smileSizePx = ViewUtils.convertDipToPixels(24, itemView.getContext());
-
-        if (serverSyncIcon == null) {
-            serverSyncIcon = ContextCompat.getDrawable(itemView.getContext(), R.drawable.item_sync_ico);
-            double multiplier = (double) serverSyncIcon.getIntrinsicWidth() / serverSyncIcon.getIntrinsicHeight();
-            serverSyncIcon.setBounds(0, 0, (int) (syncEditIconsSizePx * multiplier), syncEditIconsSizePx);
-        }
-
-        if (editIndicatorIcon == null) {
-            editIndicatorIcon = ContextCompat.getDrawable(itemView.getContext(), R.drawable.item_edit_ico);
-            double multiplier = (double) editIndicatorIcon.getIntrinsicWidth() / editIndicatorIcon.getIntrinsicHeight();
-            editIndicatorIcon.setBounds(0, 0, (int) (syncEditIconsSizePx * multiplier), syncEditIconsSizePx);
-        }
-
-        if (TextUtils.isEmpty(allDayLabelText))
-            allDayLabelText = itemView.getContext().getResources().getString(R.string.default_all_day_label);
-
-        indicators = (TextView) itemView.findViewById(R.id.indicators_owner_synchronize);
-        title = (TextView) itemView.findViewById(R.id.event_title);
-        synchronizeButton = (ImageView) itemView.findViewById(R.id.calendar_sync_icon);
-        dayLabel = (TextView) itemView.findViewById(R.id.day_title);
-        eventTime = (TextView) itemView.findViewById(R.id.event_time);
 
         this.backgroundHandler = backgroundHandler;
         this.uiHandler = uiHandler;
@@ -99,19 +79,50 @@ public class EventHolder extends RecyclerView.ViewHolder {
             }
         });
 
-        if (synchronizeButton != null) {
-            synchronizeButton.setOnClickListener(new TimeOutClickListener() {
-                @Override
-                public void onViewClick(View view) {
-                    if (onEventClickListener != null) {
-                        onEventClickListener.onSyncClick(event, position);
+        if (eventDecoratorFactory != null) {
+            eventDecorator = eventDecoratorFactory.createEventDecorator(itemView);
+        } else {
+            if (syncEditIconsSizePx == 0)
+                syncEditIconsSizePx = ViewUtils.convertDipToPixels(20, itemView.getContext());
+
+            if (smileSizePx == 0)
+                smileSizePx = ViewUtils.convertDipToPixels(24, itemView.getContext());
+
+            if (serverSyncIcon == null) {
+                serverSyncIcon = ContextCompat.getDrawable(itemView.getContext(), R.drawable.item_sync_ico);
+                double multiplier = (double) serverSyncIcon.getIntrinsicWidth() / serverSyncIcon.getIntrinsicHeight();
+                serverSyncIcon.setBounds(0, 0, (int) (syncEditIconsSizePx * multiplier), syncEditIconsSizePx);
+            }
+
+            if (editIndicatorIcon == null) {
+                editIndicatorIcon = ContextCompat.getDrawable(itemView.getContext(), R.drawable.item_edit_ico);
+                double multiplier = (double) editIndicatorIcon.getIntrinsicWidth() / editIndicatorIcon.getIntrinsicHeight();
+                editIndicatorIcon.setBounds(0, 0, (int) (syncEditIconsSizePx * multiplier), syncEditIconsSizePx);
+            }
+
+            if (TextUtils.isEmpty(allDayLabelText))
+                allDayLabelText = itemView.getContext().getResources().getString(R.string.default_all_day_label);
+
+            indicators = (TextView) itemView.findViewById(R.id.indicators_owner_synchronize);
+            title = (TextView) itemView.findViewById(R.id.event_title);
+            synchronizeButton = (ImageView) itemView.findViewById(R.id.calendar_sync_icon);
+            dayLabel = (TextView) itemView.findViewById(R.id.day_title);
+            eventTime = (TextView) itemView.findViewById(R.id.event_time);
+
+            if (synchronizeButton != null) {
+                synchronizeButton.setOnClickListener(new TimeOutClickListener() {
+                    @Override
+                    public void onViewClick(View view) {
+                        if (onEventClickListener != null) {
+                            onEventClickListener.onSyncClick(event, position);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     }
 
-    public void bindView(final Event event, final ListItemModel previous, int position, @Nullable EventDecorator eventDecorator) {
+    public void bindView(final Event event, final ListItemModel previous, int position) {
         if (eventDecorator != null) {
             eventDecorator.onBindEventView(itemView, event, previous, position);
         } else {

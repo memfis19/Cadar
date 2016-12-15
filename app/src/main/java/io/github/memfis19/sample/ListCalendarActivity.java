@@ -5,8 +5,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,6 +29,10 @@ import io.github.memfis19.cadar.event.CalendarPrepareCallback;
 import io.github.memfis19.cadar.event.DisplayEventCallback;
 import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.EventDecorator;
 import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.MonthDecorator;
+import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.WeekDecorator;
+import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.factory.EventDecoratorFactory;
+import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.factory.MonthDecoratorFactory;
+import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.factory.WeekDecoratorFactory;
 import io.github.memfis19.cadar.internal.ui.list.adapter.model.ListItemModel;
 import io.github.memfis19.cadar.settings.ListCalendarConfiguration;
 import io.github.memfis19.cadar.view.ListCalendar;
@@ -51,55 +59,115 @@ public class ListCalendarActivity extends AppCompatActivity implements CalendarP
         listCalendar = (ListCalendar) findViewById(R.id.listCalendar);
 
         ListCalendarConfiguration.Builder listBuilder = new ListCalendarConfiguration.Builder(this);
-        listBuilder.setEventLayout(R.layout.custom_event_layout, new EventDecorator() {
+
+        EventDecoratorFactory eventDecoratorFactory = new EventDecoratorFactory() {
             @Override
-            public void onBindEventView(View view, Event event, ListItemModel previous, int position) {
-                TextView textView = (TextView) view.findViewById(R.id.day_title);
-                view.setBackgroundColor(ContextCompat.getColor(ListCalendarActivity.this, R.color.eventBackground));
-                textView.setText(event.getEventTitle() + "\n" + event.getEventStartDate());
+            public EventDecorator createEventDecorator(View parent) {
+                return new EventDecoratorImpl(parent);
             }
-        });
-        listBuilder.setMonthLayout(R.layout.custom_month_calendar_event_layout, new MonthDecorator() {
+        };
 
-            Custom custom;
-
+        WeekDecoratorFactory weekDecoratorFactory = new WeekDecoratorFactory() {
             @Override
-            public void onBindMonthView(View view, Calendar month) {
-                final ImageView monthBackground = (ImageView) view.findViewById(R.id.month_background);
-                final TextView monthTitle = (TextView) view.findViewById(R.id.month_label);
-
-                custom.setMonthBackground(monthBackground);
-
-                monthBackground.setImageDrawable(null);
-
-                final int backgroundId = getBackgroundId(month.get(Calendar.MONTH));
-                monthTitle.setText(month.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault()));
-                Picasso.with(monthTitle.getContext().getApplicationContext()).load(backgroundId).into(monthBackground, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        if (Build.VERSION.SDK_INT > 13) {
-                            monthBackground.setScrollX(0);
-                            monthBackground.setScrollY(0);
-                        }
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
+            public WeekDecorator createWeekDecorator(View parent) {
+                return new WeeDecoratorImpl(parent);
             }
+        };
 
-            @NonNull
+        MonthDecoratorFactory monthDecoratorFactory = new MonthDecoratorFactory() {
             @Override
-            public RecyclerView.OnScrollListener getScrollListener() {
-                custom = new Custom();
-                return custom;
+            public MonthDecorator createMonthDecorator(View parent) {
+                return new MonthDecoratorImpl(parent);
             }
-        });
+        };
+
+        listBuilder.setEventLayout(R.layout.custom_event_layout, eventDecoratorFactory);
+        listBuilder.setWeekLayout(R.layout.custom_week_title_layout, weekDecoratorFactory);
+        listBuilder.setMonthLayout(R.layout.custom_month_calendar_event_layout, monthDecoratorFactory);
 
         listCalendar.setCalendarPrepareCallback(this);
         listCalendar.prepareCalendar(listBuilder.build());
+    }
+
+    private class MonthDecoratorImpl implements MonthDecorator {
+
+        private ImageView monthBackground;
+        private TextView monthTitle;
+        private Custom custom;
+
+        public MonthDecoratorImpl(View parent) {
+            monthBackground = (ImageView) parent.findViewById(R.id.month_background);
+            monthTitle = (TextView) parent.findViewById(R.id.month_label);
+        }
+
+        @Override
+        public void onBindMonthView(View view, Calendar month) {
+            monthBackground.setImageDrawable(null);
+
+            final int backgroundId = getBackgroundId(month.get(Calendar.MONTH));
+            monthTitle.setText(month.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault()));
+            Picasso.with(monthTitle.getContext().getApplicationContext()).load(backgroundId).into(monthBackground, new Callback() {
+                @Override
+                public void onSuccess() {
+                    if (Build.VERSION.SDK_INT > 13) {
+                        monthBackground.setScrollX(0);
+                        monthBackground.setScrollY(0);
+                    }
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
+        }
+
+        @NonNull
+        @Override
+        public RecyclerView.OnScrollListener getScrollListener() {
+            custom = new Custom();
+            return custom;
+        }
+    }
+
+    private class EventDecoratorImpl implements EventDecorator {
+
+        private TextView textView;
+
+        public EventDecoratorImpl(View parent) {
+            textView = (TextView) parent.findViewById(R.id.day_title);
+        }
+
+        @Override
+        public void onBindEventView(View view, Event event, ListItemModel previous, int position) {
+            view.setBackgroundColor(ContextCompat.getColor(ListCalendarActivity.this, R.color.eventBackground));
+            textView.setText(event.getEventTitle() + "\n" + event.getEventStartDate());
+        }
+    }
+
+    private class WeeDecoratorImpl implements WeekDecorator {
+
+        private TextView title;
+
+        public WeeDecoratorImpl(View parent) {
+            title = (TextView) parent.findViewById(io.github.memfis19.cadar.R.id.week_title);
+        }
+
+        @Override
+        public void onBindWeekView(View view, Pair<Calendar, Calendar> period) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(title.getContext().getString(io.github.memfis19.cadar.R.string.calendar_week));
+            stringBuilder.append("custom ");
+            stringBuilder.append(period.first.get(Calendar.WEEK_OF_YEAR));
+            stringBuilder.append(", ");
+            stringBuilder.append(DateFormat.format("dd MMM", period.first));
+            stringBuilder.append(" - ");
+            stringBuilder.append(DateFormat.format("dd MMM", period.second));
+
+            final Spannable date = new SpannableString(stringBuilder.toString());
+
+            title.setText(date);
+        }
     }
 
     private int getBackgroundId(int month) {

@@ -323,16 +323,16 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             view = LayoutInflater.from(parent.getContext())
                     .inflate(configuration.getEventLayoutId(), parent, false);
 
-            holder = new EventHolder(view, backgroundHandler, uiHandler, onEventClickListener);
+            holder = new EventHolder(view, backgroundHandler, uiHandler, onEventClickListener, configuration.getEventDecoratorFactory());
         } else if (viewType == ListItemModel.WEEK) {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(configuration.getWeekLayoutId(), parent, false);
-            holder = new WeekHolder(view, backgroundHandler, uiHandler);
+            holder = new WeekHolder(view, backgroundHandler, uiHandler, configuration.getWeekDecoratorFactory());
         } else {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(configuration.getMonthLayoutId(), parent, false);
 
-            holder = new MonthHolder(recyclerView, view, backgroundHandler, uiHandler);
+            holder = new MonthHolder(recyclerView, view, backgroundHandler, uiHandler, configuration.getMonthDecoratorFactory());
         }
 
         return holder;
@@ -341,11 +341,11 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (getItemViewType(position) == ListItemModel.EVENT) {
-            ((EventHolder) holder).bindView((Event) listItemModels.get(position).getValue(), position > 0 ? listItemModels.get(position - 1) : null, position, configuration.getEventDecorator());
+            ((EventHolder) holder).bindView((Event) listItemModels.get(position).getValue(), position > 0 ? listItemModels.get(position - 1) : null, position);
         } else if (getItemViewType(position) == ListItemModel.WEEK) {
-            ((WeekHolder) holder).bindView((Pair<Calendar, Calendar>) listItemModels.get(position).getValue(), configuration.getWeekDecorator());
+            ((WeekHolder) holder).bindView((Pair<Calendar, Calendar>) listItemModels.get(position).getValue());
         } else if (getItemViewType(position) == ListItemModel.MONTH) {
-            ((MonthHolder) holder).bindView((Calendar) listItemModels.get(position).getValue(), configuration.getMonthDecorator());
+            ((MonthHolder) holder).bindView((Calendar) listItemModels.get(position).getValue());
         }
     }
 

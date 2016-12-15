@@ -7,9 +7,9 @@ import android.support.annotation.NonNull;
 import io.github.memfis19.cadar.R;
 import io.github.memfis19.cadar.internal.configuration.BaseCalendarConfiguration;
 import io.github.memfis19.cadar.internal.configuration.BaseCalendarConfigurationBuilder;
-import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.EventDecorator;
-import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.MonthDecorator;
-import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.WeekDecorator;
+import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.factory.EventDecoratorFactory;
+import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.factory.MonthDecoratorFactory;
+import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.factory.WeekDecoratorFactory;
 
 /**
  * Created by serg on 13.09.16.
@@ -18,9 +18,9 @@ public class ListCalendarConfiguration extends BaseCalendarConfiguration {
 
     private int capacityYears = 3;
 
-    private EventDecorator eventDecorator;
-    private WeekDecorator weekDecorator;
-    private MonthDecorator monthDecorator;
+    private EventDecoratorFactory eventDecoratorFactory;
+    private WeekDecoratorFactory weekDecoratorFactory;
+    private MonthDecoratorFactory monthDecoratorFactory;
 
     @LayoutRes
     private int
@@ -46,21 +46,21 @@ public class ListCalendarConfiguration extends BaseCalendarConfiguration {
             return this;
         }
 
-        public Builder setEventLayout(@LayoutRes int layoutId, EventDecorator eventDecorator) {
+        public Builder setEventLayout(@LayoutRes int layoutId, EventDecoratorFactory eventDecoratorFactory) {
             listCalendarConfiguration.eventLayoutId = layoutId;
-            listCalendarConfiguration.eventDecorator = eventDecorator;
+            listCalendarConfiguration.eventDecoratorFactory = eventDecoratorFactory;
             return this;
         }
 
-        public Builder setWeekLayout(@LayoutRes int layoutId, WeekDecorator weekDecorator) {
+        public Builder setWeekLayout(@LayoutRes int layoutId, WeekDecoratorFactory weekDecoratorFactory) {
             listCalendarConfiguration.weekLayoutId = layoutId;
-            listCalendarConfiguration.weekDecorator = weekDecorator;
+            listCalendarConfiguration.weekDecoratorFactory = weekDecoratorFactory;
             return this;
         }
 
-        public Builder setMonthLayout(@LayoutRes int layoutId, MonthDecorator monthDecorator) {
+        public Builder setMonthLayout(@LayoutRes int layoutId, MonthDecoratorFactory monthDecoratorFactory) {
             listCalendarConfiguration.monthLayoutId = layoutId;
-            listCalendarConfiguration.monthDecorator = monthDecorator;
+            listCalendarConfiguration.monthDecoratorFactory = monthDecoratorFactory;
             return this;
         }
 
@@ -87,16 +87,16 @@ public class ListCalendarConfiguration extends BaseCalendarConfiguration {
         return capacityYears;
     }
 
-    public EventDecorator getEventDecorator() {
-        return eventDecorator;
+    public EventDecoratorFactory getEventDecoratorFactory() {
+        return eventDecoratorFactory;
     }
 
-    public WeekDecorator getWeekDecorator() {
-        return weekDecorator;
+    public WeekDecoratorFactory getWeekDecoratorFactory() {
+        return weekDecoratorFactory;
     }
 
-    public MonthDecorator getMonthDecorator() {
-        return monthDecorator;
+    public MonthDecoratorFactory getMonthDecoratorFactory() {
+        return monthDecoratorFactory;
     }
 
     public int getEventLayoutId() {

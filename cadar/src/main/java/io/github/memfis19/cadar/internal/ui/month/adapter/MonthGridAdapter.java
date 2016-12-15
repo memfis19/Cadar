@@ -16,7 +16,7 @@ import io.github.memfis19.cadar.event.OnDayChangeListener;
 import io.github.memfis19.cadar.internal.helper.ScrollManager;
 import io.github.memfis19.cadar.internal.process.BaseEventsAsyncProcessor;
 import io.github.memfis19.cadar.internal.ui.month.MonthCalendarHelper;
-import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.MonthDayDecorator;
+import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.factory.MonthDayDecoratorFactory;
 import io.github.memfis19.cadar.internal.ui.month.adapter.holder.MonthDayHolder;
 import io.github.memfis19.cadar.internal.utils.DateUtils;
 
@@ -41,7 +41,7 @@ class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
 
     @LayoutRes
     private int monthDayLayoutId;
-    private MonthDayDecorator monthDayDecorator;
+    private MonthDayDecoratorFactory monthDayDecoratorFactory;
 
     private BaseEventsAsyncProcessor eventsAsyncProcessor;
     private OnDayChangeListener onDateChangeListener;
@@ -74,8 +74,8 @@ class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
         this.monthDayLayoutId = monthDayLayoutId;
     }
 
-    void setMonthDayDecorator(MonthDayDecorator monthDayDecorator) {
-        this.monthDayDecorator = monthDayDecorator;
+    void setMonthDayDecoratorFactory(MonthDayDecoratorFactory monthDayDecoratorFactory) {
+        this.monthDayDecoratorFactory = monthDayDecoratorFactory;
     }
 
     void setEventsAsyncProcessor(BaseEventsAsyncProcessor eventsAsyncProcessor) {
@@ -102,7 +102,7 @@ class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View dayOfMonthView = LayoutInflater.from(parent.getContext()).inflate(monthDayLayoutId, parent, false);
-        MonthDayHolder monthDayHolder = new MonthDayHolder(dayOfMonthView, displayDaysOutOfMonth, this);
+        MonthDayHolder monthDayHolder = new MonthDayHolder(dayOfMonthView, displayDaysOutOfMonth, this, monthDayDecoratorFactory);
         monthDayHolders.add(monthDayHolder);
         return monthDayHolder;
     }
@@ -115,8 +115,7 @@ class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
                 monthIntValue == monthDays.get(position).get(Calendar.MONTH) ?
                         calendarEvents.get(monthDays.get(position).get(Calendar.DAY_OF_MONTH), null) : null,
                 containsSelected && DateUtils.isSameDay(MonthCalendarHelper.getSelectedDay(), monthDays.get(position)),
-                containsToday && DateUtils.isToday(monthDays.get(position)),
-                monthDayDecorator
+                containsToday && DateUtils.isToday(monthDays.get(position))
         );
     }
 

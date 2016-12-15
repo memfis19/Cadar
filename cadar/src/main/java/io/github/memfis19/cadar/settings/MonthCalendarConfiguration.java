@@ -9,8 +9,8 @@ import java.util.Calendar;
 import io.github.memfis19.cadar.R;
 import io.github.memfis19.cadar.internal.configuration.BaseCalendarConfiguration;
 import io.github.memfis19.cadar.internal.configuration.BaseCalendarConfigurationBuilder;
-import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.MonthDayDecorator;
 import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.WeekDayDecorator;
+import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.factory.MonthDayDecoratorFactory;
 
 /**
  * Created by memfis on 7/14/16.
@@ -22,7 +22,7 @@ public final class MonthCalendarConfiguration extends BaseCalendarConfiguration 
 
     private boolean displayDaysOutOfMonth = true;
 
-    private MonthDayDecorator monthDayDecorator;
+    private MonthDayDecoratorFactory monthDayDecoratorFactory;
     private WeekDayDecorator weekDayDecorator;
     @LayoutRes
     private int
@@ -48,9 +48,9 @@ public final class MonthCalendarConfiguration extends BaseCalendarConfiguration 
             return this;
         }
 
-        public Builder setMonthDayLayout(@LayoutRes int monthLayoutId, MonthDayDecorator monthDayDecorator) {
+        public Builder setMonthDayLayout(@LayoutRes int monthLayoutId, MonthDayDecoratorFactory monthDayDecoratorFactory) {
             monthCalendarConfiguration.monthLayoutId = monthLayoutId;
-            monthCalendarConfiguration.monthDayDecorator = monthDayDecorator;
+            monthCalendarConfiguration.monthDayDecoratorFactory = monthDayDecoratorFactory;
             return this;
         }
 
@@ -118,8 +118,8 @@ public final class MonthCalendarConfiguration extends BaseCalendarConfiguration 
         return monthLayoutId;
     }
 
-    public MonthDayDecorator getMonthDayDecorator() {
-        return monthDayDecorator;
+    public MonthDayDecoratorFactory getMonthDayDecoratorFactory() {
+        return monthDayDecoratorFactory;
     }
 
     public int getWeekTitleLayoutId() {

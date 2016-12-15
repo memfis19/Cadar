@@ -13,14 +13,14 @@ buildscript {
 }
 
 group = 'io.github.memfis19'
-version = '0.2.0'
+version = '0.2.1'
 
 ext {
     PUBLISH_GROUP_ID = 'io.github.memfis19'
     PUBLISH_ARTIFACT_ID = 'cadar'
-    PUBLISH_VERSION = '0.2.0'
-    PUBLISH_VERSION_CODE = 4
-    SUPPORT_VERSION = '25.0.1'
+    PUBLISH_VERSION = '0.2.1'
+    PUBLISH_VERSION_CODE = 5
+    SUPPORT_VERSION = '25.1.0'
     TARGET_SDK = 24
     MIN_SDK = 10
     BUILD_TOOLS = "24.0.3"
@@ -136,7 +136,7 @@ bintray {
         version {
             name = PUBLISH_VERSION
             vcsTag = PUBLISH_VERSION
-            desc = 'Added hide/show dates of month.'
+            desc = 'Updated decorator approaches to meet view holder behaviour.'
             released = new Date()
 
         }

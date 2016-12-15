@@ -1,7 +1,6 @@
 package io.github.memfis19.cadar.internal.ui.list.adapter.holder;
 
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
@@ -14,6 +13,7 @@ import java.util.Calendar;
 
 import io.github.memfis19.cadar.R;
 import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.WeekDecorator;
+import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.factory.WeekDecoratorFactory;
 
 /**
  * Created by memfis on 9/6/16.
@@ -27,18 +27,26 @@ public class WeekHolder extends RecyclerView.ViewHolder {
     private Handler uiHandler;
     private final String DATE_FORMAT = "dd MMM";
 
-    public WeekHolder(View itemView, Handler backgroundHandler, Handler uiHandler) {
+    private WeekDecorator weekDecorator;
+
+    public WeekHolder(View itemView,
+                      Handler backgroundHandler,
+                      Handler uiHandler,
+                      WeekDecoratorFactory weekDecoratorFactory) {
         super(itemView);
 
         this.itemView = itemView;
-
         this.backgroundHandler = backgroundHandler;
         this.uiHandler = uiHandler;
 
-        title = (TextView) itemView.findViewById(R.id.week_title);
+        if (weekDecoratorFactory != null) {
+            weekDecorator = weekDecoratorFactory.createWeekDecorator(itemView);
+        } else {
+            title = (TextView) itemView.findViewById(R.id.week_title);
+        }
     }
 
-    public void bindView(final Pair<Calendar, Calendar> period, @Nullable WeekDecorator weekDecorator) {
+    public void bindView(final Pair<Calendar, Calendar> period) {
         if (weekDecorator != null) {
             weekDecorator.onBindWeekView(itemView, period);
         } else {
