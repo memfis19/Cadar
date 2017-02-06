@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,6 +28,7 @@ import io.github.memfis19.cadar.CalendarController;
 import io.github.memfis19.cadar.data.entity.Event;
 import io.github.memfis19.cadar.event.CalendarPrepareCallback;
 import io.github.memfis19.cadar.event.DisplayEventCallback;
+import io.github.memfis19.cadar.event.OnEventClickListener;
 import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.EventDecorator;
 import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.MonthDecorator;
 import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.WeekDecorator;
@@ -87,6 +89,17 @@ public class ListCalendarActivity extends AppCompatActivity implements CalendarP
 
         listCalendar.setCalendarPrepareCallback(this);
         listCalendar.prepareCalendar(listBuilder.build());
+        listCalendar.setOnEventClickListener(new OnEventClickListener() {
+            @Override
+            public void onEventClick(Event event, int position) {
+                Log.i("onEventClick", String.valueOf(event));
+            }
+
+            @Override
+            public void onSyncClick(Event event, int position) {
+                Log.i("onSyncClick", String.valueOf(event));
+            }
+        });
     }
 
     private class MonthDecoratorImpl implements MonthDecorator {
