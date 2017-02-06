@@ -13,7 +13,7 @@ buildscript {
 }
 
 group = 'io.github.memfis19'
-version = '0.2.1'
+version = '0.2.2'
 
 ext {
     PUBLISH_GROUP_ID = 'io.github.memfis19'
