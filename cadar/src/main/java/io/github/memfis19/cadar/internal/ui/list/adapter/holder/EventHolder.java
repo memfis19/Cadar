@@ -124,6 +124,8 @@ public class EventHolder extends RecyclerView.ViewHolder {
 
     public void bindView(final Event event, final ListItemModel previous, int position) {
         if (eventDecorator != null) {
+            this.event = event;
+            this.position = position;
             eventDecorator.onBindEventView(itemView, event, previous, position);
         } else {
             this.event = event;
