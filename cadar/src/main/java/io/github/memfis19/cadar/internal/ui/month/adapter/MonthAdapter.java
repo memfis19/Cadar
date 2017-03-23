@@ -32,8 +32,8 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
 
     private static final String TAG = "MonthAdapter";
 
-    private final static int MAX_YEARS_BEFORE_CURRENT = 1;
-    private final static int CAPACITY = 11;
+    private static int CAPACITY = 11;
+    private static int CAPACITY_STEP = 11;
 
     private Context context;
     private LayoutInflater inflater;
@@ -65,6 +65,18 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
 
         this.monthCalendarConfiguration = monthCalendarConfiguration;
 
+        Calendar calendar = DateUtils.getCalendarInstance();
+        calendar = DateUtils.setTimeToMidnight(calendar);
+
+        Calendar startPeriod = DateUtils.setTimeToMonthStart((Calendar) calendar.clone());
+        startPeriod.set(monthCalendarConfiguration.getPeriodType(), calendar.get(monthCalendarConfiguration.getPeriodType()) - monthCalendarConfiguration.getPeriodValue());
+
+        Calendar endPeriod = DateUtils.setTimeToMonthStart((Calendar) calendar.clone());
+        endPeriod.set(monthCalendarConfiguration.getPeriodType(), calendar.get(monthCalendarConfiguration.getPeriodType()) + monthCalendarConfiguration.getPeriodValue());
+
+        CAPACITY = DateUtils.monthBetweenPure(startPeriod.getTime(), endPeriod.getTime());
+        CAPACITY_STEP = CAPACITY;
+
         this.initialDate = monthCalendarConfiguration.getInitialDay();
         this.monthHandlerThread = monthHandlerThread;
         this.monthHandlerThread.setAdapterPrepareListener(this);
@@ -93,7 +105,7 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
 
     public static int getInitialPosition(Calendar initialDate) {
         if (INITIAL_POSITION == 0) {
-            INITIAL_POSITION = MAX_YEARS_BEFORE_CURRENT * 12 + initialDate.get(Calendar.MONTH);
+            INITIAL_POSITION = CAPACITY / 2 + 1;
         }
         return INITIAL_POSITION;
     }
@@ -112,7 +124,7 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
 
     @Override
     public int getCount() {
-        return CAPACITY * 12;
+        return CAPACITY;
     }
 
     @Override
@@ -178,6 +190,22 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
                 if (((MonthGridAdapter) recyclerView.getAdapter()).getMonth().equals(calendar)) {
                     ((MonthGridAdapter) recyclerView.getAdapter()).displayEventsForMonth(calendarEvents);
                 }
+        }
+    }
+
+    public final static int FORWARD = 1;
+    public final static int BACKWARD = 2;
+
+    public void increaseSize(int direction) {
+        if (direction == FORWARD) {
+            CAPACITY += CAPACITY_STEP;
+
+            notifyDataSetChanged();
+        } else if (direction == BACKWARD) {
+            CAPACITY += CAPACITY_STEP;
+            INITIAL_POSITION += CAPACITY_STEP;
+
+            notifyDataSetChanged();
         }
     }
 

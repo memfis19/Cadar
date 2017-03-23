@@ -16,13 +16,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import io.github.memfis19.cadar.CalendarController;
 import io.github.memfis19.cadar.data.entity.Event;
 import io.github.memfis19.cadar.event.CalendarPrepareCallback;
 import io.github.memfis19.cadar.event.DisplayEventCallback;
 import io.github.memfis19.cadar.event.OnDayChangeListener;
 import io.github.memfis19.cadar.event.OnEventClickListener;
 import io.github.memfis19.cadar.event.OnMonthChangeListener;
-import io.github.memfis19.cadar.CalendarController;
 import io.github.memfis19.cadar.internal.ui.list.adapter.ListAdapter;
 import io.github.memfis19.cadar.internal.ui.list.adapter.model.ListItemModel;
 import io.github.memfis19.cadar.internal.utils.CalendarHelper;
@@ -88,21 +88,18 @@ public class ListCalendar extends RecyclerView implements CalendarController<Lis
     @WorkerThread
     private void prepareInitialData() {
         Calendar calendar = DateUtils.getCalendarInstance();
-        calendar = DateUtils.setTimeToYearStart(calendar);
+        calendar = DateUtils.setTimeToMidnight(calendar);
 
         final List<ListItemModel> listItemModels = new ArrayList<>();
 
         Calendar startPeriod = DateUtils.setTimeToMonthStart((Calendar) calendar.clone());
-        startPeriod.set(Calendar.YEAR,
-                calendar.get(Calendar.YEAR) - configuration.getNumberOfYearsBeforeCurrent());
+        startPeriod.set(configuration.getPeriodType(), calendar.get(configuration.getPeriodType()) - configuration.getPeriodValue());
 
         Calendar endPeriod = DateUtils.setTimeToMonthStart((Calendar) calendar.clone());
-        endPeriod.set(Calendar.MONTH, Calendar.DECEMBER);
-        endPeriod.set(Calendar.YEAR,
-                calendar.get(Calendar.YEAR) + configuration.getCapacityYears()
-                        - configuration.getNumberOfYearsBeforeCurrent() - 1);
+        endPeriod.set(configuration.getPeriodType(), calendar.get(configuration.getPeriodType()) + configuration.getPeriodValue());
 
-        CalendarHelper.prepareListItems(listItemModels, startPeriod, configuration.getCapacityYears() * 12);
+        int capacityMonth = DateUtils.monthBetweenPure(startPeriod.getTime(), endPeriod.getTime());
+        CalendarHelper.prepareListItems(listItemModels, startPeriod, capacityMonth);
 
         listAdapter = new ListAdapter(
                 configuration,

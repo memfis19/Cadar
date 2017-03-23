@@ -25,6 +25,9 @@ public abstract class BaseCalendarConfigurationBuilder<T> {
     protected IEventProcessor eventProcessor = new CadarEventProcessor();
     protected EventFactory eventFactory;
 
+    protected int periodType = Calendar.YEAR;
+    protected int periodValue = 1;
+
     protected boolean weekDayTitleTranslationEnabled = false;
     @StringRes
     protected int
@@ -62,6 +65,12 @@ public abstract class BaseCalendarConfigurationBuilder<T> {
 
     public BaseCalendarConfigurationBuilder setEventFactory(@NonNull EventFactory eventFactory) {
         this.eventFactory = eventFactory;
+        return this;
+    }
+
+    public BaseCalendarConfigurationBuilder setDisplayPeriod(int periodType, int periodValue) {
+        this.periodType = periodType;
+        this.periodValue = periodValue;
         return this;
     }
 

@@ -20,8 +20,9 @@ public class BaseCalendarConfiguration {
     protected Context context;
     private Locale locale = Locale.getDefault();
     protected Calendar initialDay = DateUtils.getCalendarInstance();
-    private int maxYearsToDisplay = 10;
-    private int numberOfYearsBeforeCurrent = 1;
+
+    protected int periodType = Calendar.YEAR;
+    protected int periodValue = 1;
 
     protected boolean eventProcessingEnabled = false;
     protected IEventProcessor eventProcessor = new CadarEventProcessor();
@@ -48,6 +49,14 @@ public class BaseCalendarConfiguration {
 
     public Locale getLocale() {
         return locale;
+    }
+
+    public int getPeriodType() {
+        return periodType;
+    }
+
+    public int getPeriodValue() {
+        return periodValue;
     }
 
     public Calendar getInitialDay() {
@@ -96,13 +105,5 @@ public class BaseCalendarConfiguration {
 
     public int getSundayTitle() {
         return sundayTitle;
-    }
-
-    public int getMaxYearsToDisplay() {
-        return maxYearsToDisplay;
-    }
-
-    public int getNumberOfYearsBeforeCurrent() {
-        return numberOfYearsBeforeCurrent;
     }
 }

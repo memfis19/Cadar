@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 
+import java.util.Calendar;
+
 import io.github.memfis19.cadar.R;
 import io.github.memfis19.cadar.internal.configuration.BaseCalendarConfiguration;
 import io.github.memfis19.cadar.internal.configuration.BaseCalendarConfigurationBuilder;
@@ -15,8 +17,6 @@ import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.factory.WeekD
  * Created by serg on 13.09.16.
  */
 public class ListCalendarConfiguration extends BaseCalendarConfiguration {
-
-    private int capacityYears = 3;
 
     private EventDecoratorFactory eventDecoratorFactory;
     private WeekDecoratorFactory weekDecoratorFactory;
@@ -39,11 +39,6 @@ public class ListCalendarConfiguration extends BaseCalendarConfiguration {
         public Builder(@NonNull Context context) {
             super(context);
             listCalendarConfiguration = new ListCalendarConfiguration(context);
-        }
-
-        public Builder setYearsCapacity(int yearsCapacity) {
-            listCalendarConfiguration.capacityYears = yearsCapacity;
-            return this;
         }
 
         public Builder setEventLayout(@LayoutRes int layoutId, EventDecoratorFactory eventDecoratorFactory) {
@@ -79,12 +74,18 @@ public class ListCalendarConfiguration extends BaseCalendarConfiguration {
             listCalendarConfiguration.eventFactory = eventFactory;
             listCalendarConfiguration.eventProcessor.setEventFactory(listCalendarConfiguration.eventFactory);
 
+            if (periodType != Calendar.MONTH && periodType != Calendar.YEAR)
+                throw new IllegalArgumentException("Period type should be Calendar.MONTH or Calendar.YEAR only.");
+            if (periodValue < 1)
+                throw new IllegalArgumentException("Period value should be more then 1.");
+            if (periodType == android.icu.util.Calendar.MONTH && periodValue < 3)
+                throw new IllegalStateException("In case with Calendar.MONTH period type, minimum value should be GE 3.");
+
+            listCalendarConfiguration.periodType = periodType;
+            listCalendarConfiguration.periodValue = periodValue;
+
             return listCalendarConfiguration;
         }
-    }
-
-    public int getCapacityYears() {
-        return capacityYears;
     }
 
     public EventDecoratorFactory getEventDecoratorFactory() {

@@ -106,6 +106,16 @@ public final class MonthCalendarConfiguration extends BaseCalendarConfiguration 
                 monthCalendarConfiguration.sundayTitle = sundayTitle;
             }
 
+            if (periodType != Calendar.MONTH && periodType != Calendar.YEAR)
+                throw new IllegalArgumentException("Period type should be Calendar.MONTH or Calendar.YEAR only.");
+            if (periodValue < 1)
+                throw new IllegalArgumentException("Period value should be more then 1.");
+            if (periodType == android.icu.util.Calendar.MONTH && periodValue < 3)
+                throw new IllegalStateException("In case with Calendar.MONTH period type, minimum value should be GE 3.");
+
+            monthCalendarConfiguration.periodType = periodType;
+            monthCalendarConfiguration.periodValue = periodValue;
+
             return monthCalendarConfiguration;
         }
     }

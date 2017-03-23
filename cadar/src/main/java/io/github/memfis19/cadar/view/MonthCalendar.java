@@ -291,6 +291,12 @@ public class MonthCalendar extends LinearLayout implements ViewPager.OnPageChang
     @Override
     public void onPageSelected(int position) {
         this.currentPosition = position;
+
+        if (currentPosition == 0) {
+            monthAdapter.increaseSize(MonthAdapter.BACKWARD);
+        } else if (currentPosition == monthAdapter.getCount() - 1) {
+            monthAdapter.increaseSize(MonthAdapter.FORWARD);
+        }
     }
 
     @Override

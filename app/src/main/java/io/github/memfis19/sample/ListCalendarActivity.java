@@ -83,6 +83,7 @@ public class ListCalendarActivity extends AppCompatActivity implements CalendarP
             }
         };
 
+        listBuilder.setDisplayPeriod(Calendar.MONTH, 3);
         listBuilder.setEventLayout(R.layout.custom_event_layout, eventDecoratorFactory);
         listBuilder.setWeekLayout(R.layout.custom_week_title_layout, weekDecoratorFactory);
         listBuilder.setMonthLayout(R.layout.custom_month_calendar_event_layout, monthDecoratorFactory);

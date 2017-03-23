@@ -41,7 +41,6 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements ListCalendar.OnSetLayoutManagerListener {
 
     private static final String TAG = "ListAdapter";
-    private static final int MONTH_IN_ONE_YEAR = 12;
 
     private static final int THRESHOLD = 5;
 
@@ -57,8 +56,6 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private Calendar startPeriod;
     private Calendar endPeriod;
     private ListCalendarConfiguration configuration;
-
-    private int countOfLoadedYears = 0;
 
     private OnMonthChangeListener monthChangeListener;
     private OnDayChangeListener dayChangeListener;
@@ -93,43 +90,40 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         listEventsAsyncProcessor.setEvents(eventList);
         listEventsAsyncProcessor.start();
         listEventsAsyncProcessor.getLooper();
-
-        countOfLoadedYears = configuration.getCapacityYears();
     }
 
     private void loadMoreEvents() {
-        if (countOfLoadedYears <= configuration.getMaxYearsToDisplay()) {
-            endPeriod.add(Calendar.YEAR, 1);
-            Calendar start = DateUtils.setTimeToYearStart((Calendar) endPeriod.clone());
-            CalendarHelper.prepareListItems(listItemModels, start, MONTH_IN_ONE_YEAR);
-            listEventsAsyncProcessor.setEventsProcessorListener(new BaseEventsAsyncProcessor.EventsProcessorListener<Pair<Calendar, Calendar>, List<Event>>() {
-                @Override
-                public void onEventsProcessed(Pair<Calendar, Calendar> target, final List<Event> result) {
-                    backgroundHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Set<ListItemModel> newItems = new TreeSet<>(getComparator());
-                            newItems.addAll(listItemModels);
-                            for (Event event : result) {
-                                newItems.add(new ListItemModel(event.getEventStartDate(), event, ListItemModel.EVENT));
-                            }
+        Calendar tmp = (Calendar) endPeriod.clone();
+        endPeriod.add(configuration.getPeriodType(), configuration.getPeriodValue());
+        Calendar start = tmp;
+        CalendarHelper.prepareListItems(listItemModels, start, DateUtils.monthBetweenPure(tmp.getTime(), endPeriod.getTime()));
 
-                            listItemModels.clear();
-                            listItemModels.addAll(newItems);
-
-                            uiHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    notifyDataSetChanged();
-                                }
-                            });
+        listEventsAsyncProcessor.setEventsProcessorListener(new BaseEventsAsyncProcessor.EventsProcessorListener<Pair<Calendar, Calendar>, List<Event>>() {
+            @Override
+            public void onEventsProcessed(Pair<Calendar, Calendar> target, final List<Event> result) {
+                backgroundHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Set<ListItemModel> newItems = new TreeSet<>(getComparator());
+                        newItems.addAll(listItemModels);
+                        for (Event event : result) {
+                            newItems.add(new ListItemModel(event.getEventStartDate(), event, ListItemModel.EVENT));
                         }
-                    });
-                }
-            });
-            listEventsAsyncProcessor.queueEventsProcess(new Pair<>(start, endPeriod));
-            countOfLoadedYears++;
-        }
+
+                        listItemModels.clear();
+                        listItemModels.addAll(newItems);
+
+                        uiHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+        listEventsAsyncProcessor.queueEventsProcess(new Pair<>(start, endPeriod));
     }
 
     public void displayEvents(List<Event> events, final DisplayEventCallback callback) {
@@ -139,9 +133,6 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         eventList.addAll(events);
 
         listEventsAsyncProcessor.setEvents(events);
-
-        startPeriod.setTime(DateUtils.setTimeToYearStart(startPeriod.getTime()));
-        endPeriod.setTime(DateUtils.setTimeToYearEnd(endPeriod.getTime()));
 
         position = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastVisibleItemPosition();
         listEventsAsyncProcessor.setEventsProcessorListener(new BaseEventsAsyncProcessor.EventsProcessorListener<Pair<Calendar, Calendar>, List<Event>>() {
