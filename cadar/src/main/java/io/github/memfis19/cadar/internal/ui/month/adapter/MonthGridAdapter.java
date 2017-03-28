@@ -14,7 +14,7 @@ import java.util.List;
 import io.github.memfis19.cadar.data.entity.Event;
 import io.github.memfis19.cadar.event.OnDayChangeListener;
 import io.github.memfis19.cadar.internal.helper.ScrollManager;
-import io.github.memfis19.cadar.internal.process.BaseEventsAsyncProcessor;
+import io.github.memfis19.cadar.internal.process.EventsProcessor;
 import io.github.memfis19.cadar.internal.ui.month.MonthCalendarHelper;
 import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.factory.MonthDayDecoratorFactory;
 import io.github.memfis19.cadar.internal.ui.month.adapter.holder.MonthDayHolder;
@@ -43,7 +43,7 @@ class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
     private int monthDayLayoutId;
     private MonthDayDecoratorFactory monthDayDecoratorFactory;
 
-    private BaseEventsAsyncProcessor eventsAsyncProcessor;
+    private EventsProcessor eventsAsyncProcessor;
     private OnDayChangeListener onDateChangeListener;
 
     MonthGridAdapter(Calendar month, List<Calendar> monthItems, boolean displayDaysOutOfMonth) {
@@ -78,7 +78,7 @@ class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
         this.monthDayDecoratorFactory = monthDayDecoratorFactory;
     }
 
-    void setEventsAsyncProcessor(BaseEventsAsyncProcessor eventsAsyncProcessor) {
+    void setEventsAsyncProcessor(EventsProcessor eventsAsyncProcessor) {
         this.eventsAsyncProcessor = eventsAsyncProcessor;
     }
 

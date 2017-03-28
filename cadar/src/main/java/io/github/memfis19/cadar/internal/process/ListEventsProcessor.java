@@ -8,16 +8,16 @@ import java.util.Date;
 import java.util.List;
 
 import io.github.memfis19.cadar.data.entity.Event;
-import io.github.memfis19.cadar.data.process.IEventProcessor;
+import io.github.memfis19.cadar.data.process.EventCalculator;
 import io.github.memfis19.cadar.internal.utils.DateUtils;
 
 /**
  * Created by memfis on 7/22/16.
  */
-public class ListEventsAsyncProcessor extends BaseEventsAsyncProcessor<Pair<Calendar, Calendar>, List<Event>> {
+public class ListEventsProcessor extends EventsProcessor<Pair<Calendar, Calendar>, List<Event>> {
 
-    public ListEventsAsyncProcessor(boolean shouldProcess, IEventProcessor eventProcessor) {
-        super(shouldProcess, eventProcessor);
+    public ListEventsProcessor(boolean shouldProcess, EventCalculator eventProcessor) {
+        super(shouldProcess, eventProcessor, false);
     }
 
     @Override

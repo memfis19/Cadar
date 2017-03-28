@@ -12,47 +12,44 @@ import java.util.List;
 import java.util.Queue;
 
 import io.github.memfis19.cadar.data.entity.Event;
-import io.github.memfis19.cadar.data.process.IEventProcessor;
-import io.github.memfis19.cadar.internal.process.utils.CircularFifoQueue;
+import io.github.memfis19.cadar.data.process.EventCalculator;
 import io.github.memfis19.cadar.internal.helper.ScrollManager;
+import io.github.memfis19.cadar.internal.process.utils.CircularFifoQueue;
 
 /**
  * Created by memfis on 7/22/16.
  */
-public abstract class BaseEventsAsyncProcessor<T, E> extends HandlerThread implements ScrollManager.OnScrollChanged {
+public abstract class EventsProcessor<T, E> extends HandlerThread implements ScrollManager.OnScrollChanged {
 
-    private static final String TAG = "BaseEventsAsyncProcessor";
+    private static final String TAG = "EventsProcessor";
 
     private static final int MESSAGE_EVENTS_PROCESS = 126;
 
-    private IEventProcessor iEventProcessor;
+    private EventCalculator eventCalculator;
     private List<Event> eventList;
     private Queue<Pair<T, E>> resultQueue = new CircularFifoQueue<>(3);
 
     private boolean shouldProcess;
-
+    private boolean processAsync = false;
     private boolean hasQuit = false;
 
     private Handler requestHandler;
     private Handler responseHandler = new Handler(Looper.getMainLooper());
 
-    private EventsProcessorListener eventsProcessorListener;
+    private EventsProcessorCallback<T, E> eventsProcessorCallback;
 
-    public interface EventsProcessorListener<T, E> {
-        void onEventsProcessed(T target, E result);
-    }
-
-    public BaseEventsAsyncProcessor(boolean shouldProcess, IEventProcessor eventProcessor) {
+    public EventsProcessor(boolean shouldProcess, EventCalculator eventProcessor, boolean processAsync) {
         super(String.valueOf(System.currentTimeMillis()), Process.THREAD_PRIORITY_BACKGROUND);
 
         this.shouldProcess = shouldProcess;
-        this.iEventProcessor = eventProcessor;
+        this.eventCalculator = eventProcessor;
+        this.processAsync = processAsync;
 
         ScrollManager.getInstance().subscribeForScrollStateChanged(this);
     }
 
-    protected IEventProcessor getEventProcessor() {
-        return iEventProcessor;
+    protected EventCalculator getEventProcessor() {
+        return eventCalculator;
     }
 
     protected List<Event> getEventList() {
@@ -63,17 +60,17 @@ public abstract class BaseEventsAsyncProcessor<T, E> extends HandlerThread imple
         return shouldProcess;
     }
 
-    public void setEventProcessor(IEventProcessor eventProcessor) {
-        this.iEventProcessor = eventProcessor;
+    public void setEventProcessor(EventCalculator eventProcessor) {
+        this.eventCalculator = eventProcessor;
     }
 
     public void setEvents(List<Event> eventList) {
         this.eventList = eventList;
-        this.iEventProcessor.setEventsToProcess(eventList);
+        this.eventCalculator.setEventsToProcess(eventList);
     }
 
-    public void setEventsProcessorListener(EventsProcessorListener<T, E> eventsProcessorListener) {
-        this.eventsProcessorListener = eventsProcessorListener;
+    public void setEventsProcessorCallback(EventsProcessorCallback<T, E> eventsProcessorCallback) {
+        this.eventsProcessorCallback = eventsProcessorCallback;
     }
 
     public void queueEventsProcess(T target) {
@@ -113,10 +110,16 @@ public abstract class BaseEventsAsyncProcessor<T, E> extends HandlerThread imple
     }
 
     private void handleRequest(final T target) {
-        deliverResult(target, processEvents(target));
+        if (processAsync) processEventsAsync(target, eventsProcessorCallback);
+        else deliverResult(target, processEvents(target));
     }
 
-    protected abstract E processEvents(final T target);
+    protected E processEvents(final T target) {
+        return null;
+    }
+
+    protected void processEventsAsync(final T target, EventsProcessorCallback<T, E> eventsProcessorCallback) {
+    }
 
     private void deliverResult(final T target, final E result) {
         if (ScrollManager.getInstance().getCurrentScrollState() == ScrollManager.SCROLL_STATE_IDLE) {
@@ -125,13 +128,13 @@ public abstract class BaseEventsAsyncProcessor<T, E> extends HandlerThread imple
                 public void run() {
                     if (hasQuit) return;
 
-                    if (eventsProcessorListener != null)
-                        eventsProcessorListener.onEventsProcessed(target, result);
+                    if (eventsProcessorCallback != null)
+                        eventsProcessorCallback.onEventsProcessed(target, result);
 
                 }
             });
         } else {
-            resultQueue.add(new Pair(target, result));
+            resultQueue.add(new Pair<>(target, result));
         }
     }
 
@@ -144,8 +147,8 @@ public abstract class BaseEventsAsyncProcessor<T, E> extends HandlerThread imple
                     public void run() {
                         if (hasQuit) return;
 
-                        if (eventsProcessorListener != null)
-                            eventsProcessorListener.onEventsProcessed(pair.first, pair.second);
+                        if (eventsProcessorCallback != null)
+                            eventsProcessorCallback.onEventsProcessed(pair.first, pair.second);
 
                         resultQueue.remove(pair);
                     }

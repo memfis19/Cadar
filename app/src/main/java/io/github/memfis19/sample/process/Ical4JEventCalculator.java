@@ -17,28 +17,28 @@ import java.util.Set;
 import io.github.memfis19.cadar.data.entity.Event;
 import io.github.memfis19.cadar.data.entity.property.EventProperties;
 import io.github.memfis19.cadar.data.factory.EventFactory;
-import io.github.memfis19.cadar.data.process.IEventProcessor;
+import io.github.memfis19.cadar.data.process.EventCalculator;
 import io.github.memfis19.cadar.internal.utils.DateUtils;
 
 /**
  * Created by memfis on 3/26/15.
  * Base event processing implementation of
  *
- * @see IEventProcessor
+ * @see EventCalculator
  */
-public class Ical4jEventProcessor implements IEventProcessor {
+public class Ical4JEventCalculator implements EventCalculator {
 
-    private final static String TAG = "Ical4jEventProcessor";
+    private final static String TAG = "Ical4JEventCalculator";
 
     private List<Event> eventsToProcess;
     private EventFactory eventFactory;
     private ComponentFactoryImpl componentFactory;
 
-    public Ical4jEventProcessor() {
+    public Ical4JEventCalculator() {
         this.componentFactory = ComponentFactoryImpl.getInstance();
     }
 
-    public Ical4jEventProcessor(List<Event> eventsToProcess) {
+    public Ical4JEventCalculator(List<Event> eventsToProcess) {
         this.eventsToProcess = eventsToProcess;
 
         this.componentFactory = ComponentFactoryImpl.getInstance();

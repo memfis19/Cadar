@@ -12,7 +12,7 @@ import io.github.memfis19.cadar.data.factory.EventFactory;
  *
  * @see io.github.memfis19.cadar.data.entity.property.EventProperties.RepeatPeriod
  */
-public interface IEventProcessor {
+public interface EventCalculator {
 
     void setEventFactory(EventFactory eventFactory);
 

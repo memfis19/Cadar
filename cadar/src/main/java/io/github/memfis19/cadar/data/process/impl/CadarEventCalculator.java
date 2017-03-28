@@ -6,7 +6,7 @@ import java.util.List;
 
 import io.github.memfis19.cadar.data.entity.Event;
 import io.github.memfis19.cadar.data.factory.EventFactory;
-import io.github.memfis19.cadar.data.process.IEventProcessor;
+import io.github.memfis19.cadar.data.process.EventCalculator;
 
 /**
  * Cadar
@@ -14,10 +14,10 @@ import io.github.memfis19.cadar.data.process.IEventProcessor;
  * Copyright © 2016 Applikator.
  */
 
-public class CadarEventProcessor implements IEventProcessor {
+public class CadarEventCalculator implements EventCalculator {
 
 
-    public CadarEventProcessor() {
+    public CadarEventCalculator() {
 
     }
 

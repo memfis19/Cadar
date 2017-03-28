@@ -22,6 +22,11 @@ public final class CadarSettings {
     public @interface DayOfWeeks {
     }
 
+    @IntDef({Calendar.MONTH, Calendar.YEAR})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface PeriodType {
+    }
+
     @IntDef({STATE_NOT_READY, STATE_PREPARE, STATE_READY})
     @Retention(RetentionPolicy.SOURCE)
     public @interface CalendarState {

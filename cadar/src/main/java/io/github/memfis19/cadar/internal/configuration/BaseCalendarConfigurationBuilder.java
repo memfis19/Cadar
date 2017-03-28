@@ -8,9 +8,10 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import io.github.memfis19.cadar.data.factory.EventFactory;
-import io.github.memfis19.cadar.data.process.IEventProcessor;
-import io.github.memfis19.cadar.data.process.impl.CadarEventProcessor;
+import io.github.memfis19.cadar.data.process.EventCalculator;
+import io.github.memfis19.cadar.data.process.impl.CadarEventCalculator;
 import io.github.memfis19.cadar.internal.utils.DateUtils;
+import io.github.memfis19.cadar.settings.CadarSettings;
 
 /**
  * Created by memfis on 7/21/16.
@@ -22,11 +23,14 @@ public abstract class BaseCalendarConfigurationBuilder<T> {
     protected Calendar initialDay = DateUtils.getCalendarInstance();
 
     protected boolean eventProcessingEnabled = false;
-    protected IEventProcessor eventProcessor = new CadarEventProcessor();
+
+    protected EventCalculator eventCalculator = new CadarEventCalculator();
     protected EventFactory eventFactory;
 
+    @CadarSettings.PeriodType
     protected int periodType = Calendar.YEAR;
     protected int periodValue = 1;
+
 
     protected boolean weekDayTitleTranslationEnabled = false;
     @StringRes
@@ -58,8 +62,8 @@ public abstract class BaseCalendarConfigurationBuilder<T> {
         return this;
     }
 
-    public BaseCalendarConfigurationBuilder setEventProcessor(IEventProcessor eventProcessor) {
-        this.eventProcessor = eventProcessor;
+    public BaseCalendarConfigurationBuilder setEventCalculator(EventCalculator eventCalculator) {
+        this.eventCalculator = eventCalculator;
         return this;
     }
 
@@ -68,7 +72,7 @@ public abstract class BaseCalendarConfigurationBuilder<T> {
         return this;
     }
 
-    public BaseCalendarConfigurationBuilder setDisplayPeriod(int periodType, int periodValue) {
+    public BaseCalendarConfigurationBuilder setDisplayPeriod(@CadarSettings.PeriodType int periodType, int periodValue) {
         this.periodType = periodType;
         this.periodValue = periodValue;
         return this;

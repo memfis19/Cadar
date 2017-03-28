@@ -14,12 +14,16 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import io.github.memfis19.cadar.R;
 import io.github.memfis19.cadar.data.entity.Event;
+import io.github.memfis19.cadar.event.DisplayEventCallback;
 import io.github.memfis19.cadar.event.OnDayChangeListener;
-import io.github.memfis19.cadar.internal.process.BaseEventsAsyncProcessor;
+import io.github.memfis19.cadar.internal.process.EventsProcessor;
+import io.github.memfis19.cadar.internal.process.EventsProcessorCallback;
 import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.factory.MonthDayDecoratorFactory;
 import io.github.memfis19.cadar.internal.utils.DateUtils;
 import io.github.memfis19.cadar.settings.MonthCalendarConfiguration;
@@ -28,7 +32,7 @@ import io.github.memfis19.cadar.settings.MonthCalendarConfiguration;
  * Created by memfis on 7/19/16.
  */
 public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
-        BaseEventsAsyncProcessor.EventsProcessorListener<Calendar, SparseArray<List<Event>>>, MonthHandlerThread.AdapterPrepareListener {
+        EventsProcessorCallback<Calendar, SparseArray<List<Event>>>, MonthHandlerThread.AdapterPrepareListener {
 
     private static final String TAG = "MonthAdapter";
 
@@ -43,8 +47,12 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
     private Handler backgroundHandler;
     private Handler uiHandler;
 
-    private BaseEventsAsyncProcessor eventsAsyncProcessor;
+    private Set<Event> events = new HashSet<>();
+    private List<Event> eventList = new ArrayList<>();
+
+    private EventsProcessor<Calendar, SparseArray<List<Event>>> eventsAsyncProcessor;
     private OnDayChangeListener onDateChangeListener;
+    private DisplayEventCallback<Calendar> callback;
 
     @LayoutRes
     private int monthDayLayoutId;
@@ -58,7 +66,7 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
 
     public MonthAdapter(Context context,
                         MonthHandlerThread monthHandlerThread,
-                        BaseEventsAsyncProcessor eventsAsyncProcessor,
+                        EventsProcessor<Calendar, SparseArray<List<Event>>> eventsAsyncProcessor,
                         MonthCalendarConfiguration monthCalendarConfiguration) {
 
         this(context, eventsAsyncProcessor, monthCalendarConfiguration.getMonthLayoutId(), monthCalendarConfiguration.getMonthDayDecoratorFactory());
@@ -86,7 +94,7 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
     }
 
     MonthAdapter(Context context,
-                 BaseEventsAsyncProcessor eventsAsyncProcessor,
+                 EventsProcessor<Calendar, SparseArray<List<Event>>> eventsAsyncProcessor,
                  @LayoutRes int monthDayLayoutId,
                  MonthDayDecoratorFactory monthDayDecoratorFactory) {
         this.context = context;
@@ -96,7 +104,7 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
         this.monthDayLayoutId = monthDayLayoutId;
         this.monthDayDecoratorFactory = monthDayDecoratorFactory;
 
-        this.eventsAsyncProcessor.setEventsProcessorListener(this);
+        this.eventsAsyncProcessor.setEventsProcessorCallback(this);
     }
 
     public void setOnDateChangeListener(OnDayChangeListener onDateChangeListener) {
@@ -152,8 +160,24 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
         collection.removeView((View) view);
     }
 
-    public void displayEvents(List<Event> eventList) {
-        eventsAsyncProcessor.setEvents(eventList);
+    public void displayEvents(List<Event> eventList, DisplayEventCallback<Calendar> callback) {
+        events.clear();
+        events.addAll(eventList);
+
+        this.eventList.clear();
+        this.eventList.addAll(events);
+
+        this.callback = callback;
+        displayEvents();
+    }
+
+    public void addEvents(List<Event> eventList) {
+        events.addAll(eventList);
+
+        this.eventList.clear();
+        this.eventList.addAll(events);
+
+        eventsAsyncProcessor.setEvents(this.eventList);
         displayEvents();
     }
 
@@ -189,6 +213,7 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
             if (recyclerView.getAdapter() != null)
                 if (((MonthGridAdapter) recyclerView.getAdapter()).getMonth().equals(calendar)) {
                     ((MonthGridAdapter) recyclerView.getAdapter()).displayEventsForMonth(calendarEvents);
+                    if (callback != null) callback.onEventsDisplayed(calendar);
                 }
         }
     }

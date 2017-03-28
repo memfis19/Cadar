@@ -8,16 +8,16 @@ import java.util.Date;
 import java.util.List;
 
 import io.github.memfis19.cadar.data.entity.Event;
-import io.github.memfis19.cadar.data.process.IEventProcessor;
+import io.github.memfis19.cadar.data.process.EventCalculator;
 import io.github.memfis19.cadar.internal.utils.DateUtils;
 
 /**
  * Created by memfis on 7/22/16.
  */
-public class MonthEventsAsyncProcessor extends BaseEventsAsyncProcessor<Calendar, SparseArray<List<Event>>> {
+public class MonthEventsProcessor extends EventsProcessor<Calendar, SparseArray<List<Event>>> {
 
-    public MonthEventsAsyncProcessor(boolean shouldProcess, IEventProcessor eventProcessor) {
-        super(shouldProcess, eventProcessor);
+    public MonthEventsProcessor(boolean shouldProcess, EventCalculator eventProcessor) {
+        super(shouldProcess, eventProcessor, false);
     }
 
     @Override
@@ -25,7 +25,7 @@ public class MonthEventsAsyncProcessor extends BaseEventsAsyncProcessor<Calendar
 
         List<Event> result;
 
-        final SparseArray<List<Event>> calendarEvents = new SparseArray();
+        final SparseArray<List<Event>> calendarEvents = new SparseArray<>();
 
         if (isShouldProcess()) {
             Date start = DateUtils.setTimeToMonthStart(target.getTime());

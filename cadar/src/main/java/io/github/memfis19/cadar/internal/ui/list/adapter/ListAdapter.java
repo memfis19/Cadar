@@ -22,8 +22,9 @@ import io.github.memfis19.cadar.event.DisplayEventCallback;
 import io.github.memfis19.cadar.event.OnDayChangeListener;
 import io.github.memfis19.cadar.event.OnEventClickListener;
 import io.github.memfis19.cadar.event.OnMonthChangeListener;
-import io.github.memfis19.cadar.internal.process.BaseEventsAsyncProcessor;
-import io.github.memfis19.cadar.internal.process.ListEventsAsyncProcessor;
+import io.github.memfis19.cadar.internal.process.EventsProcessor;
+import io.github.memfis19.cadar.internal.process.EventsProcessorCallback;
+import io.github.memfis19.cadar.internal.process.ListEventsProcessor;
 import io.github.memfis19.cadar.internal.ui.list.adapter.holder.EventHolder;
 import io.github.memfis19.cadar.internal.ui.list.adapter.holder.MonthHolder;
 import io.github.memfis19.cadar.internal.ui.list.adapter.holder.WeekHolder;
@@ -50,7 +51,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private Handler backgroundHandler;
     private Handler uiHandler;
 
-    private ListEventsAsyncProcessor listEventsAsyncProcessor;
+    private EventsProcessor<Pair<Calendar, Calendar>, List<Event>> listEventsAsyncProcessor;
     private int position;
 
     private Calendar startPeriod;
@@ -62,6 +63,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private OnEventClickListener onEventClickListener;
 
     private List<Event> eventList = new ArrayList<>();
+    private DisplayEventCallback<Pair<Calendar, Calendar>> callback;
 
     public ListAdapter(ListCalendarConfiguration configuration,
                        RecyclerView recyclerView,
@@ -85,8 +87,12 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         this.monthChangeListener = monthChangeLister;
         this.dayChangeListener = dayChangeListener;
 
-        listEventsAsyncProcessor = new ListEventsAsyncProcessor(configuration.isEventProcessingEnabled(), configuration.getEventProcessor());
-        listEventsAsyncProcessor.setEventProcessor(configuration.getEventProcessor());
+        if (configuration.getEventsProcessor() != null)
+            listEventsAsyncProcessor = configuration.getEventsProcessor();
+        else
+            listEventsAsyncProcessor = new ListEventsProcessor(configuration.isEventProcessingEnabled(), configuration.getEventCalculator());
+
+        listEventsAsyncProcessor.setEventProcessor(configuration.getEventCalculator());
         listEventsAsyncProcessor.setEvents(eventList);
         listEventsAsyncProcessor.start();
         listEventsAsyncProcessor.getLooper();
@@ -98,35 +104,47 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         Calendar start = tmp;
         CalendarHelper.prepareListItems(listItemModels, start, DateUtils.monthBetweenPure(tmp.getTime(), endPeriod.getTime()));
 
-        listEventsAsyncProcessor.setEventsProcessorListener(new BaseEventsAsyncProcessor.EventsProcessorListener<Pair<Calendar, Calendar>, List<Event>>() {
-            @Override
-            public void onEventsProcessed(Pair<Calendar, Calendar> target, final List<Event> result) {
-                backgroundHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Set<ListItemModel> newItems = new TreeSet<>(getComparator());
-                        newItems.addAll(listItemModels);
-                        for (Event event : result) {
-                            newItems.add(new ListItemModel(event.getEventStartDate(), event, ListItemModel.EVENT));
-                        }
-
-                        listItemModels.clear();
-                        listItemModels.addAll(newItems);
-
-                        uiHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                notifyDataSetChanged();
-                            }
-                        });
-                    }
-                });
-            }
-        });
+        listEventsAsyncProcessor.setEventsProcessorCallback(new DefaultEventsProcessorCallback(true));
         listEventsAsyncProcessor.queueEventsProcess(new Pair<>(start, endPeriod));
     }
 
-    public void displayEvents(List<Event> events, final DisplayEventCallback callback) {
+    private class DefaultEventsProcessorCallback implements EventsProcessorCallback<Pair<Calendar, Calendar>, List<Event>> {
+
+        private boolean processCallback = false;
+
+        DefaultEventsProcessorCallback(boolean processCallback) {
+            this.processCallback = processCallback;
+        }
+
+        @Override
+        public void onEventsProcessed(final Pair<Calendar, Calendar> target, final List<Event> result) {
+            backgroundHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Set<ListItemModel> newItems = new TreeSet<>(getComparator());
+                    newItems.addAll(listItemModels);
+                    for (Event event : result) {
+                        newItems.add(new ListItemModel(event.getEventStartDate(), event, ListItemModel.EVENT));
+                    }
+
+                    listItemModels.clear();
+                    listItemModels.addAll(newItems);
+
+                    uiHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyDataSetChanged();
+                            if (processCallback && callback != null)
+                                callback.onEventsDisplayed(target);
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    public void displayEvents(List<Event> events, final DisplayEventCallback<Pair<Calendar, Calendar>> callback) {
+        this.callback = callback;
         if (this.eventList == null) this.eventList = new ArrayList<>();
 
         eventList.clear();
@@ -135,11 +153,11 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         listEventsAsyncProcessor.setEvents(events);
 
         position = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastVisibleItemPosition();
-        listEventsAsyncProcessor.setEventsProcessorListener(new BaseEventsAsyncProcessor.EventsProcessorListener<Pair<Calendar, Calendar>, List<Event>>() {
-            @Override
-            public void onEventsProcessed(Pair<Calendar, Calendar> target, final List<Event> result) {
-                listEventsAsyncProcessor.setEvents(eventList);
 
+        listEventsAsyncProcessor.setEventsProcessorCallback(new EventsProcessorCallback<Pair<Calendar, Calendar>, List<Event>>() {
+            @Override
+            public void onEventsProcessed(final Pair<Calendar, Calendar> target, final List<Event> result) {
+                listEventsAsyncProcessor.setEvents(eventList);
                 backgroundHandler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -213,7 +231,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                             public void run() {
                                 diffResult.dispatchUpdatesTo(ListAdapter.this);
                                 if (callback != null)
-                                    callback.onEventsDisplayed();
+                                    callback.onEventsDisplayed(target);
                             }
                         });
                     }
@@ -228,6 +246,16 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         eventList.add(event);
 
         listEventsAsyncProcessor.setEvents(Collections.singletonList(event));
+        listEventsAsyncProcessor.setEventsProcessorCallback(new DefaultEventsProcessorCallback(false));
+        listEventsAsyncProcessor.queueEventsProcess(new Pair<>(startPeriod, endPeriod));
+    }
+
+    public void addEvents(List<Event> events) {
+        if (this.eventList == null) this.eventList = new ArrayList<>();
+        eventList.addAll(events);
+
+        listEventsAsyncProcessor.setEvents(events);
+        listEventsAsyncProcessor.setEventsProcessorCallback(new DefaultEventsProcessorCallback(false));
         listEventsAsyncProcessor.queueEventsProcess(new Pair<>(startPeriod, endPeriod));
     }
 

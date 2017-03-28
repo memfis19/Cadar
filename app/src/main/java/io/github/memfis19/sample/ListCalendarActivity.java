@@ -2,6 +2,7 @@ package io.github.memfis19.sample;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -29,6 +30,8 @@ import io.github.memfis19.cadar.data.entity.Event;
 import io.github.memfis19.cadar.event.CalendarPrepareCallback;
 import io.github.memfis19.cadar.event.DisplayEventCallback;
 import io.github.memfis19.cadar.event.OnEventClickListener;
+import io.github.memfis19.cadar.internal.process.EventsProcessor;
+import io.github.memfis19.cadar.internal.process.EventsProcessorCallback;
 import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.EventDecorator;
 import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.MonthDecorator;
 import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.WeekDecorator;
@@ -87,6 +90,7 @@ public class ListCalendarActivity extends AppCompatActivity implements CalendarP
         listBuilder.setEventLayout(R.layout.custom_event_layout, eventDecoratorFactory);
         listBuilder.setWeekLayout(R.layout.custom_week_title_layout, weekDecoratorFactory);
         listBuilder.setMonthLayout(R.layout.custom_month_calendar_event_layout, monthDecoratorFactory);
+//        listBuilder.setEventsProcessor(new CustomEventProcessor());
 
         listCalendar.setCalendarPrepareCallback(this);
         listCalendar.prepareCalendar(listBuilder.build());
@@ -234,10 +238,10 @@ public class ListCalendarActivity extends AppCompatActivity implements CalendarP
 
     @Override
     public void onCalendarReady(CalendarController calendar) {
-        listCalendar.displayEvents(events, new DisplayEventCallback() {
+        listCalendar.displayEvents(events, new DisplayEventCallback<Pair<Calendar, Calendar>>() {
             @Override
-            public void onEventsDisplayed() {
-
+            public void onEventsDisplayed(Pair<Calendar, Calendar> period) {
+                Log.d("", "");
             }
         });
     }
@@ -247,5 +251,25 @@ public class ListCalendarActivity extends AppCompatActivity implements CalendarP
         super.onDestroy();
 
         listCalendar.releaseCalendar();
+    }
+
+    class CustomEventProcessor extends EventsProcessor<Pair<Calendar, Calendar>, List<Event>> {
+
+        public CustomEventProcessor() {
+            super(false, null, true);
+        }
+
+        @Override
+        protected void processEventsAsync(final Pair<Calendar, Calendar> target, final EventsProcessorCallback<Pair<Calendar, Calendar>, List<Event>> eventsProcessorCallback) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < 5; ++i) {
+                        events.add(new EventModel());
+                    }
+                    eventsProcessorCallback.onEventsProcessed(target, events);
+                }
+            }, 3000);
+        }
     }
 }

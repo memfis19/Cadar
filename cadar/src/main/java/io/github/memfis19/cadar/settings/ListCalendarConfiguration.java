@@ -3,12 +3,16 @@ package io.github.memfis19.cadar.settings;
 import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.v4.util.Pair;
 
 import java.util.Calendar;
+import java.util.List;
 
 import io.github.memfis19.cadar.R;
+import io.github.memfis19.cadar.data.entity.Event;
 import io.github.memfis19.cadar.internal.configuration.BaseCalendarConfiguration;
 import io.github.memfis19.cadar.internal.configuration.BaseCalendarConfigurationBuilder;
+import io.github.memfis19.cadar.internal.process.EventsProcessor;
 import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.factory.EventDecoratorFactory;
 import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.factory.MonthDecoratorFactory;
 import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.factory.WeekDecoratorFactory;
@@ -21,6 +25,8 @@ public class ListCalendarConfiguration extends BaseCalendarConfiguration {
     private EventDecoratorFactory eventDecoratorFactory;
     private WeekDecoratorFactory weekDecoratorFactory;
     private MonthDecoratorFactory monthDecoratorFactory;
+
+    private EventsProcessor<Pair<Calendar, Calendar>, List<Event>> eventsProcessor;
 
     @LayoutRes
     private int
@@ -47,6 +53,11 @@ public class ListCalendarConfiguration extends BaseCalendarConfiguration {
             return this;
         }
 
+        public Builder setEventsProcessor(EventsProcessor<Pair<Calendar, Calendar>, List<Event>> eventsProcessor) {
+            listCalendarConfiguration.eventsProcessor = eventsProcessor;
+            return this;
+        }
+
         public Builder setWeekLayout(@LayoutRes int layoutId, WeekDecoratorFactory weekDecoratorFactory) {
             listCalendarConfiguration.weekLayoutId = layoutId;
             listCalendarConfiguration.weekDecoratorFactory = weekDecoratorFactory;
@@ -64,21 +75,21 @@ public class ListCalendarConfiguration extends BaseCalendarConfiguration {
             if (context == null)
                 throw new NullPointerException("Passed activity to month calendar configuration can't be null.");
 
-            if (eventProcessingEnabled && eventProcessor == null)
+            if (eventProcessingEnabled && eventCalculator == null)
                 throw new IllegalStateException("Configuration set to process events. But event processor not passed or null.");
             listCalendarConfiguration.eventProcessingEnabled = eventProcessingEnabled;
-            listCalendarConfiguration.eventProcessor = eventProcessor;
+            listCalendarConfiguration.eventCalculator = eventCalculator;
 
             if (eventProcessingEnabled && eventFactory == null)
                 throw new NullPointerException("Event factory is null. Please setup it.");
             listCalendarConfiguration.eventFactory = eventFactory;
-            listCalendarConfiguration.eventProcessor.setEventFactory(listCalendarConfiguration.eventFactory);
+            listCalendarConfiguration.eventCalculator.setEventFactory(listCalendarConfiguration.eventFactory);
 
             if (periodType != Calendar.MONTH && periodType != Calendar.YEAR)
                 throw new IllegalArgumentException("Period type should be Calendar.MONTH or Calendar.YEAR only.");
             if (periodValue < 1)
                 throw new IllegalArgumentException("Period value should be more then 1.");
-            if (periodType == android.icu.util.Calendar.MONTH && periodValue < 3)
+            if (periodType == Calendar.MONTH && periodValue < 3)
                 throw new IllegalStateException("In case with Calendar.MONTH period type, minimum value should be GE 3.");
 
             listCalendarConfiguration.periodType = periodType;
@@ -110,5 +121,9 @@ public class ListCalendarConfiguration extends BaseCalendarConfiguration {
 
     public int getMonthLayoutId() {
         return monthLayoutId;
+    }
+
+    public EventsProcessor<Pair<Calendar, Calendar>, List<Event>> getEventsProcessor() {
+        return eventsProcessor;
     }
 }

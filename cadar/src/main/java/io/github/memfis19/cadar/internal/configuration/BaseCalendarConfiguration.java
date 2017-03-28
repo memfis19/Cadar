@@ -8,9 +8,10 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import io.github.memfis19.cadar.data.factory.EventFactory;
-import io.github.memfis19.cadar.data.process.IEventProcessor;
-import io.github.memfis19.cadar.data.process.impl.CadarEventProcessor;
+import io.github.memfis19.cadar.data.process.EventCalculator;
+import io.github.memfis19.cadar.data.process.impl.CadarEventCalculator;
 import io.github.memfis19.cadar.internal.utils.DateUtils;
+import io.github.memfis19.cadar.settings.CadarSettings;
 
 /**
  * Created by memfis on 7/21/16.
@@ -21,11 +22,12 @@ public class BaseCalendarConfiguration {
     private Locale locale = Locale.getDefault();
     protected Calendar initialDay = DateUtils.getCalendarInstance();
 
+    @CadarSettings.PeriodType
     protected int periodType = Calendar.YEAR;
     protected int periodValue = 1;
 
     protected boolean eventProcessingEnabled = false;
-    protected IEventProcessor eventProcessor = new CadarEventProcessor();
+    protected EventCalculator eventCalculator = new CadarEventCalculator();
     protected EventFactory eventFactory;
 
     protected boolean weekDayTitleTranslationEnabled = false;
@@ -51,6 +53,7 @@ public class BaseCalendarConfiguration {
         return locale;
     }
 
+    @CadarSettings.PeriodType
     public int getPeriodType() {
         return periodType;
     }
@@ -67,8 +70,8 @@ public class BaseCalendarConfiguration {
         return eventProcessingEnabled;
     }
 
-    public IEventProcessor getEventProcessor() {
-        return eventProcessor;
+    public EventCalculator getEventCalculator() {
+        return eventCalculator;
     }
 
     public EventFactory getEventFactory() {

@@ -2,8 +2,11 @@ package io.github.memfis19.sample;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,13 +22,15 @@ import io.github.memfis19.cadar.event.CalendarPrepareCallback;
 import io.github.memfis19.cadar.event.DisplayEventCallback;
 import io.github.memfis19.cadar.event.OnDayChangeListener;
 import io.github.memfis19.cadar.event.OnMonthChangeListener;
+import io.github.memfis19.cadar.internal.process.EventsProcessor;
+import io.github.memfis19.cadar.internal.process.EventsProcessorCallback;
 import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.MonthDayDecorator;
 import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.factory.MonthDayDecoratorFactory;
 import io.github.memfis19.cadar.internal.utils.DateUtils;
 import io.github.memfis19.cadar.settings.MonthCalendarConfiguration;
 import io.github.memfis19.cadar.view.MonthCalendar;
 import io.github.memfis19.sample.model.EventModel;
-import io.github.memfis19.sample.process.Ical4jEventProcessor;
+import io.github.memfis19.sample.process.Ical4JEventCalculator;
 
 /**
  * Created by memfis on 11/23/16.
@@ -58,7 +63,7 @@ public class MonthCalendarActivity extends AppCompatActivity implements Calendar
         builder.setDisplayPeriod(Calendar.YEAR, 1);
         builder.setDisplayDaysOutOfMonth(false);
         builder.setEventProcessingEnabled(true);
-        builder.setEventProcessor(new Ical4jEventProcessor());
+        builder.setEventCalculator(new Ical4JEventCalculator());
         builder.setEventFactory(new EventFactory() {
             @Override
             public Event createEventCopy(Event event) {
@@ -66,6 +71,7 @@ public class MonthCalendarActivity extends AppCompatActivity implements Calendar
             }
         });
         builder.setMonthDayLayout(R.layout.custom_month_day_layout, monthDayDecoratorFactory);
+//        builder.setEventsProcessor(new CustomProcessor());
 
         monthCalendar.setCalendarPrepareCallback(this);
         monthCalendar.prepareCalendar(builder.build());
@@ -112,12 +118,49 @@ public class MonthCalendarActivity extends AppCompatActivity implements Calendar
 
     @Override
     public void onCalendarReady(CalendarController calendar) {
-        monthCalendar.displayEvents(events, new DisplayEventCallback() {
+        monthCalendar.displayEvents(events, new DisplayEventCallback<Calendar>() {
             @Override
-            public void onEventsDisplayed() {
-
+            public void onEventsDisplayed(Calendar period) {
+                Log.d("", "");
             }
         });
+
+
+    }
+
+    class CustomProcessor extends EventsProcessor<Calendar, SparseArray<List<Event>>> {
+
+        public CustomProcessor() {
+            super(false, null, true);
+        }
+
+        @Override
+        protected void processEventsAsync(final Calendar target, final EventsProcessorCallback<Calendar, SparseArray<List<Event>>> eventsProcessorCallback) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < 5; ++i) {
+                        events.add(new EventModel());
+                    }
+                    final SparseArray<List<Event>> calendarEvents = new SparseArray<>();
+
+                    Calendar temp = DateUtils.getCalendarInstance();
+                    for (Event event : events) {
+                        temp.setTime(event.getEventStartDate());
+
+                        if (!DateUtils.isSameMonth(temp, target)) continue;
+
+                        List<Event> events = calendarEvents.get(temp.get(Calendar.DAY_OF_MONTH), new ArrayList<Event>());
+                        events.add(event);
+
+                        calendarEvents.put(temp.get(Calendar.DAY_OF_MONTH), events);
+                    }
+                    events.clear();
+
+                    eventsProcessorCallback.onEventsProcessed(target, calendarEvents);
+                }
+            }, 3000);
+        }
     }
 
     @Override

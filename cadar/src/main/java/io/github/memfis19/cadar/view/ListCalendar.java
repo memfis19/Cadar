@@ -8,6 +8,7 @@ import android.os.Process;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -33,7 +34,7 @@ import io.github.memfis19.cadar.settings.ListCalendarConfiguration;
 /**
  * Created by memfis on 9/5/16.
  */
-public class ListCalendar extends RecyclerView implements CalendarController<ListCalendarConfiguration> {
+public class ListCalendar extends RecyclerView implements CalendarController<ListCalendarConfiguration, Pair<Calendar, Calendar>> {
 
     private static final String TAG = "ListCalendar";
 
@@ -159,13 +160,17 @@ public class ListCalendar extends RecyclerView implements CalendarController<Lis
     }
 
     @Override
-    public void displayEvents(List list, DisplayEventCallback callback) {
+    public void displayEvents(List<Event> list, DisplayEventCallback<Pair<Calendar, Calendar>> callback) {
         this.eventList = list;
         if (listAdapter != null) listAdapter.displayEvents(list, callback);
     }
 
     public void addEvent(Event event) {
         listAdapter.addEvent(event);
+    }
+
+    public void addEvents(List<Event> events) {
+        listAdapter.addEvents(events);
     }
 
     public void editEvent(Event event) {

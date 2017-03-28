@@ -3,12 +3,16 @@ package io.github.memfis19.cadar.settings;
 import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.util.SparseArray;
 
 import java.util.Calendar;
+import java.util.List;
 
 import io.github.memfis19.cadar.R;
+import io.github.memfis19.cadar.data.entity.Event;
 import io.github.memfis19.cadar.internal.configuration.BaseCalendarConfiguration;
 import io.github.memfis19.cadar.internal.configuration.BaseCalendarConfigurationBuilder;
+import io.github.memfis19.cadar.internal.process.EventsProcessor;
 import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.WeekDayDecorator;
 import io.github.memfis19.cadar.internal.ui.month.adapter.decorator.factory.MonthDayDecoratorFactory;
 
@@ -24,6 +28,9 @@ public final class MonthCalendarConfiguration extends BaseCalendarConfiguration 
 
     private MonthDayDecoratorFactory monthDayDecoratorFactory;
     private WeekDayDecorator weekDayDecorator;
+    private EventsProcessor<Calendar, SparseArray<List<Event>>> eventsProcessor;
+
+
     @LayoutRes
     private int
             monthLayoutId = R.layout.month_calendar_event_layout,
@@ -54,6 +61,11 @@ public final class MonthCalendarConfiguration extends BaseCalendarConfiguration 
             return this;
         }
 
+        public Builder setEventsProcessor(EventsProcessor<Calendar, SparseArray<List<Event>>> eventsProcessor) {
+            monthCalendarConfiguration.eventsProcessor = eventsProcessor;
+            return this;
+        }
+
         public Builder setDayWeekTitleLayout(@LayoutRes int weekTitleLayoutId, WeekDayDecorator weekDayDecorator) {
             monthCalendarConfiguration.weekTitleLayoutId = weekTitleLayoutId;
             monthCalendarConfiguration.weekDayDecorator = weekDayDecorator;
@@ -74,15 +86,15 @@ public final class MonthCalendarConfiguration extends BaseCalendarConfiguration 
                 throw new NullPointerException("Passed initial day can't be null.");
             monthCalendarConfiguration.initialDay = initialDay;
 
-            if (eventProcessingEnabled && eventProcessor == null)
+            if (eventProcessingEnabled && eventCalculator == null)
                 throw new IllegalStateException("Configuration set to process events. But event processor not passed or null.");
             monthCalendarConfiguration.eventProcessingEnabled = eventProcessingEnabled;
-            monthCalendarConfiguration.eventProcessor = eventProcessor;
+            monthCalendarConfiguration.eventCalculator = eventCalculator;
 
             if (eventProcessingEnabled && eventFactory == null)
                 throw new NullPointerException("Event factory is null. Please setup it.");
             monthCalendarConfiguration.eventFactory = eventFactory;
-            monthCalendarConfiguration.eventProcessor.setEventFactory(monthCalendarConfiguration.eventFactory);
+            monthCalendarConfiguration.eventCalculator.setEventFactory(monthCalendarConfiguration.eventFactory);
 
             if (weekDayTitleTranslationEnabled) {
                 if (mondayTitle == 0
@@ -110,7 +122,7 @@ public final class MonthCalendarConfiguration extends BaseCalendarConfiguration 
                 throw new IllegalArgumentException("Period type should be Calendar.MONTH or Calendar.YEAR only.");
             if (periodValue < 1)
                 throw new IllegalArgumentException("Period value should be more then 1.");
-            if (periodType == android.icu.util.Calendar.MONTH && periodValue < 3)
+            if (periodType == Calendar.MONTH && periodValue < 3)
                 throw new IllegalStateException("In case with Calendar.MONTH period type, minimum value should be GE 3.");
 
             monthCalendarConfiguration.periodType = periodType;
@@ -142,5 +154,9 @@ public final class MonthCalendarConfiguration extends BaseCalendarConfiguration 
 
     public boolean isDisplayDaysOutOfMonth() {
         return displayDaysOutOfMonth;
+    }
+
+    public EventsProcessor<Calendar, SparseArray<List<Event>>> getEventsProcessor() {
+        return eventsProcessor;
     }
 }

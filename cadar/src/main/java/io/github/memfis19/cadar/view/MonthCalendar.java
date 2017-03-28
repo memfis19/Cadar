@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.os.Process;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,8 +30,8 @@ import io.github.memfis19.cadar.event.DisplayEventCallback;
 import io.github.memfis19.cadar.event.OnDayChangeListener;
 import io.github.memfis19.cadar.event.OnMonthChangeListener;
 import io.github.memfis19.cadar.internal.helper.ScrollManager;
-import io.github.memfis19.cadar.internal.process.BaseEventsAsyncProcessor;
-import io.github.memfis19.cadar.internal.process.MonthEventsAsyncProcessor;
+import io.github.memfis19.cadar.internal.process.EventsProcessor;
+import io.github.memfis19.cadar.internal.process.MonthEventsProcessor;
 import io.github.memfis19.cadar.internal.ui.month.MonthCalendarHelper;
 import io.github.memfis19.cadar.internal.ui.month.adapter.MonthAdapter;
 import io.github.memfis19.cadar.internal.ui.month.adapter.MonthHandlerThread;
@@ -42,7 +43,7 @@ import io.github.memfis19.cadar.settings.MonthCalendarConfiguration;
  * Created by memfis on 7/14/16.
  */
 public class MonthCalendar extends LinearLayout implements ViewPager.OnPageChangeListener,
-        ScrollManager.OnScrollChanged, CalendarController<MonthCalendarConfiguration>, ViewTreeObserver.OnPreDrawListener {
+        ScrollManager.OnScrollChanged, CalendarController<MonthCalendarConfiguration, Calendar>, ViewTreeObserver.OnPreDrawListener {
 
     private static final String TAG = "MonthView3";
 
@@ -50,7 +51,7 @@ public class MonthCalendar extends LinearLayout implements ViewPager.OnPageChang
     private int currentPosition = 0;
 
     private MonthHandlerThread monthHandlerThread;
-    private BaseEventsAsyncProcessor eventsAsyncProcessor;
+    private EventsProcessor<Calendar, SparseArray<List<Event>>> eventsAsyncProcessor;
 
     private LayoutInflater layoutInflater;
     private ViewGroup monthHeaderView;
@@ -86,7 +87,7 @@ public class MonthCalendar extends LinearLayout implements ViewPager.OnPageChang
     }
 
     public MonthCalendar(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
+        super(context, attrs);
         init();
     }
 
@@ -118,8 +119,11 @@ public class MonthCalendar extends LinearLayout implements ViewPager.OnPageChang
         monthHandlerThread.start();
         monthHandlerThread.getLooper();
 
-        eventsAsyncProcessor = new MonthEventsAsyncProcessor(monthCalendarConfiguration.isEventProcessingEnabled(), monthCalendarConfiguration.getEventProcessor());
-        eventsAsyncProcessor.setEventProcessor(monthCalendarConfiguration.getEventProcessor());
+        if (monthCalendarConfiguration.getEventsProcessor() != null)
+            eventsAsyncProcessor = monthCalendarConfiguration.getEventsProcessor();
+        else
+            eventsAsyncProcessor = new MonthEventsProcessor(monthCalendarConfiguration.isEventProcessingEnabled(), monthCalendarConfiguration.getEventCalculator());
+        eventsAsyncProcessor.setEventProcessor(monthCalendarConfiguration.getEventCalculator());
         eventsAsyncProcessor.start();
         eventsAsyncProcessor.getLooper();
 
@@ -279,9 +283,14 @@ public class MonthCalendar extends LinearLayout implements ViewPager.OnPageChang
     }
 
     @Override
-    public void displayEvents(List<Event> eventList, DisplayEventCallback callback) {
+    public void displayEvents(List<Event> eventList, DisplayEventCallback<Calendar> callback) {
         if (monthAdapter != null)
-            monthAdapter.displayEvents(eventList);
+            monthAdapter.displayEvents(eventList, callback);
+    }
+
+    public void addEvents(List<Event> eventList) {
+        if (monthAdapter != null)
+            monthAdapter.addEvents(eventList);
     }
 
     @Override
