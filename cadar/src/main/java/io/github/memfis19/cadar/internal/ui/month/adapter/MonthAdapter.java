@@ -53,6 +53,11 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
     private EventsProcessor<Calendar, SparseArray<List<Event>>> eventsAsyncProcessor;
     private OnDayChangeListener onDateChangeListener;
     private DisplayEventCallback<Calendar> callback;
+    private MonthGridCallback monthGridCallback;
+
+    public interface MonthGridCallback {
+        void onMonthGridReady(Calendar month);
+    }
 
     @LayoutRes
     private int monthDayLayoutId;
@@ -107,6 +112,10 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
         this.eventsAsyncProcessor.setEventsProcessorCallback(this);
     }
 
+    public void setMonthGridCallback(MonthGridCallback monthGridCallback) {
+        this.monthGridCallback = monthGridCallback;
+    }
+
     public void setOnDateChangeListener(OnDayChangeListener onDateChangeListener) {
         this.onDateChangeListener = onDateChangeListener;
     }
@@ -151,6 +160,10 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
 
         collection.addView(recyclerView);
         return recyclerView;
+    }
+
+    public int getCountOfInstantiateItems() {
+        return monthFragments.size();
     }
 
     @Override
@@ -247,6 +260,7 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setAdapter(monthGridAdapter);
 
-        monthGridAdapter.requestDisplayEvents();
+        if (monthGridCallback != null) monthGridCallback.onMonthGridReady(month);
+//        monthGridAdapter.requestDisplayEvents();
     }
 }

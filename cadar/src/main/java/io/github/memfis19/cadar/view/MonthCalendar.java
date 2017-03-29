@@ -72,6 +72,8 @@ public class MonthCalendar extends LinearLayout implements ViewPager.OnPageChang
     protected Handler backgroundHandler;
     protected Handler uiHandler = new Handler(Looper.getMainLooper());
 
+    private int amountOfReadyMonths = 0;
+
     public void setCalendarPrepareCallback(CalendarPrepareCallback calendarPrepareCallback) {
         this.calendarPrepareCallback = calendarPrepareCallback;
     }
@@ -142,6 +144,17 @@ public class MonthCalendar extends LinearLayout implements ViewPager.OnPageChang
                 monthAdapter = new MonthAdapter(monthCalendarConfiguration.getContext(), monthHandlerThread,
                         eventsAsyncProcessor, monthCalendarConfiguration);
                 monthAdapter.setOnDateChangeListener(onDateChangeListener);
+                monthAdapter.setMonthGridCallback(new MonthAdapter.MonthGridCallback() {
+                    @Override
+                    public void onMonthGridReady(Calendar month) {
+                        amountOfReadyMonths++;
+
+                        if (amountOfReadyMonths == monthAdapter.getCountOfInstantiateItems() && calendarPrepareCallback != null) {
+                            calendarPrepareCallback.onCalendarReady(MonthCalendar.this);
+                            monthAdapter.setMonthGridCallback(null);
+                        }
+                    }
+                });
 
                 uiHandler.post(new Runnable() {
                     @Override
@@ -155,9 +168,6 @@ public class MonthCalendar extends LinearLayout implements ViewPager.OnPageChang
                         monthGridView.addOnPageChangeListener(MonthCalendar.this);
 
                         getViewTreeObserver().addOnPreDrawListener(MonthCalendar.this);
-
-                        if (calendarPrepareCallback != null)
-                            calendarPrepareCallback.onCalendarReady(MonthCalendar.this);
                     }
                 });
             }
