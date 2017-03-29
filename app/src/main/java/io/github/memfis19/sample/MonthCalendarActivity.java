@@ -122,10 +122,10 @@ public class MonthCalendarActivity extends AppCompatActivity implements Calendar
             @Override
             public void onEventsDisplayed(Calendar period) {
                 Log.d("", "");
+
+                monthCalendar.refresh();
             }
         });
-
-
     }
 
     class CustomProcessor extends EventsProcessor<Calendar, SparseArray<List<Event>>> {

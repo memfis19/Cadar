@@ -2,7 +2,6 @@ package io.github.memfis19.cadar.internal.ui.list.adapter.holder;
 
 import android.os.Handler;
 import android.support.v4.util.Pair;
-import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.format.DateFormat;
@@ -18,7 +17,7 @@ import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.factory.WeekD
 /**
  * Created by memfis on 9/6/16.
  */
-public class WeekHolder extends RecyclerView.ViewHolder {
+public class WeekHolder extends ListHolder {
 
     private View itemView;
     private TextView title;

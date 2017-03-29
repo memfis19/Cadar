@@ -22,7 +22,7 @@ import io.github.memfis19.cadar.internal.ui.list.adapter.decorator.factory.Month
 /**
  * Created by memfis on 9/5/16.
  */
-public class MonthHolder extends RecyclerView.ViewHolder {
+public class MonthHolder extends ListHolder {
 
     private final String DATE_FORMAT = "MMMM yyyy";
 

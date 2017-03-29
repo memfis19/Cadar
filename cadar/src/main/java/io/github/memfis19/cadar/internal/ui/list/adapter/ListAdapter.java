@@ -26,6 +26,7 @@ import io.github.memfis19.cadar.internal.process.EventsProcessor;
 import io.github.memfis19.cadar.internal.process.EventsProcessorCallback;
 import io.github.memfis19.cadar.internal.process.ListEventsProcessor;
 import io.github.memfis19.cadar.internal.ui.list.adapter.holder.EventHolder;
+import io.github.memfis19.cadar.internal.ui.list.adapter.holder.ListHolder;
 import io.github.memfis19.cadar.internal.ui.list.adapter.holder.MonthHolder;
 import io.github.memfis19.cadar.internal.ui.list.adapter.holder.WeekHolder;
 import io.github.memfis19.cadar.internal.ui.list.adapter.model.ListItemModel;
@@ -38,14 +39,14 @@ import io.github.memfis19.cadar.view.ListCalendar;
 /**
  * Created by memfis on 9/5/16.
  */
-public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+public class ListAdapter extends RecyclerView.Adapter<ListHolder>
         implements ListCalendar.OnSetLayoutManagerListener {
 
     private static final String TAG = "ListAdapter";
 
     private static final int THRESHOLD = 5;
 
-    private RecyclerView recyclerView;
+    private ListCalendar calendarListView;
     private List<ListItemModel> listItemModels;
 
     private Handler backgroundHandler;
@@ -66,7 +67,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private DisplayEventCallback<Pair<Calendar, Calendar>> callback;
 
     public ListAdapter(ListCalendarConfiguration configuration,
-                       RecyclerView recyclerView,
+                       ListCalendar calendarListView,
                        List<ListItemModel> listItemModels,
                        List<Event> eventList,
                        Calendar startPeriod, Calendar endPeriod,
@@ -74,7 +75,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                        OnMonthChangeListener monthChangeLister,
                        OnDayChangeListener dayChangeListener) {
 
-        this.recyclerView = recyclerView;
+        this.calendarListView = calendarListView;
         this.listItemModels = listItemModels;
         this.backgroundHandler = backgroundHandler;
         this.uiHandler = uiHandler;
@@ -108,12 +109,28 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         listEventsAsyncProcessor.queueEventsProcess(new Pair<>(start, endPeriod));
     }
 
+    private void loadBefore() {
+        Calendar tmp = (Calendar) startPeriod.clone();
+        startPeriod.add(configuration.getPeriodType(), configuration.getPeriodValue() * -1);
+        Calendar end = tmp;
+        CalendarHelper.prepareListItems(listItemModels, startPeriod, DateUtils.monthBetweenPure(startPeriod.getTime(), end.getTime()));
+
+        listEventsAsyncProcessor.setEventsProcessorCallback(new DefaultEventsProcessorCallback(true, true));
+        listEventsAsyncProcessor.queueEventsProcess(new Pair<>(startPeriod, end));
+    }
+
     private class DefaultEventsProcessorCallback implements EventsProcessorCallback<Pair<Calendar, Calendar>, List<Event>> {
 
         private boolean processCallback = false;
+        private boolean keepPosition = false;
 
         DefaultEventsProcessorCallback(boolean processCallback) {
             this.processCallback = processCallback;
+        }
+
+        DefaultEventsProcessorCallback(boolean processCallback, boolean keepPosition) {
+            this.processCallback = processCallback;
+            this.keepPosition = keepPosition;
         }
 
         @Override
@@ -121,11 +138,13 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             backgroundHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    Set<ListItemModel> newItems = new TreeSet<>(getComparator());
+                    final Set<ListItemModel> newItems = new TreeSet<>(getComparator());
                     newItems.addAll(listItemModels);
                     for (Event event : result) {
                         newItems.add(new ListItemModel(event.getEventStartDate(), event, ListItemModel.EVENT));
                     }
+
+                    final Calendar previousDate = getCurrentDate();
 
                     listItemModels.clear();
                     listItemModels.addAll(newItems);
@@ -134,6 +153,9 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         @Override
                         public void run() {
                             notifyDataSetChanged();
+
+                            if (keepPosition) setSelectedMonth(previousDate);
+
                             if (processCallback && callback != null)
                                 callback.onEventsDisplayed(target);
                         }
@@ -141,6 +163,10 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 }
             });
         }
+    }
+
+    public void displayEvents() {
+        displayEvents(new ArrayList<>(eventList), null);
     }
 
     public void displayEvents(List<Event> events, final DisplayEventCallback<Pair<Calendar, Calendar>> callback) {
@@ -152,7 +178,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         listEventsAsyncProcessor.setEvents(events);
 
-        position = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastVisibleItemPosition();
+        position = ((LinearLayoutManager) calendarListView.getLayoutManager()).findLastVisibleItemPosition();
 
         listEventsAsyncProcessor.setEventsProcessorCallback(new EventsProcessorCallback<Pair<Calendar, Calendar>, List<Event>>() {
             @Override
@@ -308,7 +334,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     private void scrollToPosition(int position) {
-        ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(position, 0);
+        ((LinearLayoutManager) calendarListView.getLayoutManager()).scrollToPositionWithOffset(position, 0);
     }
 
     public void setSelectedDay(final Calendar selectedDay) {
@@ -334,42 +360,45 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ListHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
 
-        RecyclerView.ViewHolder holder;
+        ListHolder holder;
         if (viewType == ListItemModel.EVENT) {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(configuration.getEventLayoutId(), parent, false);
 
             holder = new EventHolder(view, backgroundHandler, uiHandler, onEventClickListener, configuration.getEventDecoratorFactory());
+            holder.setType(ListItemModel.EVENT);
         } else if (viewType == ListItemModel.WEEK) {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(configuration.getWeekLayoutId(), parent, false);
             holder = new WeekHolder(view, backgroundHandler, uiHandler, configuration.getWeekDecoratorFactory());
+            holder.setType(ListItemModel.WEEK);
         } else {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(configuration.getMonthLayoutId(), parent, false);
 
-            holder = new MonthHolder(recyclerView, view, backgroundHandler, uiHandler, configuration.getMonthDecoratorFactory());
+            holder = new MonthHolder(calendarListView, view, backgroundHandler, uiHandler, configuration.getMonthDecoratorFactory());
+            holder.setType(ListItemModel.MONTH);
         }
 
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (getItemViewType(position) == ListItemModel.EVENT) {
+    public void onBindViewHolder(ListHolder holder, int position) {
+        if (holder.getType() == ListItemModel.EVENT) {
             ((EventHolder) holder).bindView((Event) listItemModels.get(position).getValue(), position > 0 ? listItemModels.get(position - 1) : null, position);
-        } else if (getItemViewType(position) == ListItemModel.WEEK) {
+        } else if (holder.getType() == ListItemModel.WEEK) {
             ((WeekHolder) holder).bindView((Pair<Calendar, Calendar>) listItemModels.get(position).getValue());
-        } else if (getItemViewType(position) == ListItemModel.MONTH) {
+        } else if (holder.getType() == ListItemModel.MONTH) {
             ((MonthHolder) holder).bindView((Calendar) listItemModels.get(position).getValue());
         }
     }
 
     @Override
-    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+    public void onViewDetachedFromWindow(ListHolder holder) {
         super.onViewDetachedFromWindow(holder);
         if (holder instanceof MonthHolder) {
             ((MonthHolder) holder).detach();
@@ -382,15 +411,16 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     private Calendar getCurrentDate() {
-        return listItemModels.get(getFirstVisibleItemPosition()).getCalendar();
+        int position = getFirstVisibleItemPosition();
+        return listItemModels.get(position > 0 ? position : 0).getCalendar();
     }
 
     private int getFirstVisibleItemPosition() {
-        return ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+        return ((LinearLayoutManager) calendarListView.getLayoutManager()).findFirstVisibleItemPosition();
     }
 
     private int getCurrentPosition() {
-        int lastVisiblePosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastVisibleItemPosition();
+        int lastVisiblePosition = ((LinearLayoutManager) calendarListView.getLayoutManager()).findLastVisibleItemPosition();
         return getDatePosition(listItemModels.get(lastVisiblePosition).getCalendar());
     }
 
@@ -426,14 +456,14 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public void onSetLayoutManager(RecyclerView.LayoutManager layout) {
-        recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener((LinearLayoutManager) layout, THRESHOLD) {
+        calendarListView.addOnScrollListener(new EndlessRecyclerViewScrollListener((LinearLayoutManager) layout, THRESHOLD) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                recyclerView.stopScroll();
+                calendarListView.stopScroll();
                 loadMoreEvents();
             }
         });
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        calendarListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             private Calendar savedDate;
 
@@ -448,6 +478,10 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 //scrolled by scroll to position
                 if (dy == 0) {
                     return;
+                }
+
+                if (!calendarListView.canScrollVertically(-1)) {
+                    loadBefore();
                 }
 
                 if (getFirstVisibleItemPosition() > listItemModels.size())

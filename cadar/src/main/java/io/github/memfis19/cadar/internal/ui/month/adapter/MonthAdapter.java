@@ -173,6 +173,11 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
         collection.removeView((View) view);
     }
 
+    public void refresh() {
+        this.callback = null;
+        displayEvents();
+    }
+
     public void displayEvents(List<Event> eventList, DisplayEventCallback<Calendar> callback) {
         events.clear();
         events.addAll(eventList);
@@ -181,6 +186,8 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
         this.eventList.addAll(events);
 
         this.callback = callback;
+
+        eventsAsyncProcessor.setEvents(this.eventList);
         displayEvents();
     }
 

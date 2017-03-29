@@ -292,6 +292,10 @@ public class MonthCalendar extends LinearLayout implements ViewPager.OnPageChang
         return weekDayView;
     }
 
+    public void refresh() {
+        monthAdapter.refresh();
+    }
+
     @Override
     public void displayEvents(List<Event> eventList, DisplayEventCallback<Calendar> callback) {
         if (monthAdapter != null)

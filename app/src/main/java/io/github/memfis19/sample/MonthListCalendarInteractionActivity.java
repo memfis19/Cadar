@@ -158,14 +158,14 @@ public class MonthListCalendarInteractionActivity extends AppCompatActivity impl
     @Override
     public void onCalendarReady(CalendarController calendar) {
         if (calendar == monthCalendar) {
-            monthCalendar.displayEvents(events, new DisplayEventCallback<Calendar>() {
+            monthCalendar.displayEvents(new ArrayList<>(events), new DisplayEventCallback<Calendar>() {
                 @Override
                 public void onEventsDisplayed(Calendar month) {
 
                 }
             });
         } else if (calendar == listCalendar) {
-            listCalendar.displayEvents(events, new DisplayEventCallback<Pair<Calendar, Calendar>>() {
+            listCalendar.displayEvents(new ArrayList<>(events), new DisplayEventCallback<Pair<Calendar, Calendar>>() {
                 @Override
                 public void onEventsDisplayed(Pair<Calendar, Calendar> period) {
 

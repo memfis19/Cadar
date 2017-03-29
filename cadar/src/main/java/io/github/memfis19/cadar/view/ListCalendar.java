@@ -12,6 +12,7 @@ import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -121,7 +122,7 @@ public class ListCalendar extends RecyclerView implements CalendarController<Lis
 
     @UiThread
     private void initListWithAdapter() {
-        setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        setLayoutManager(new CalendarLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         setAdapter(listAdapter);
         scrollToPosition(listAdapter.getDatePosition(DateUtils.setTimeToMidnight(selectedDay)));
         if (calendarPrepareCallback != null)
@@ -165,6 +166,10 @@ public class ListCalendar extends RecyclerView implements CalendarController<Lis
         if (listAdapter != null) listAdapter.displayEvents(list, callback);
     }
 
+    public void refresh() {
+        if (listAdapter != null) listAdapter.displayEvents();
+    }
+
     public void addEvent(Event event) {
         listAdapter.addEvent(event);
     }
@@ -191,6 +196,74 @@ public class ListCalendar extends RecyclerView implements CalendarController<Lis
 
     public void setSelectedMonth(Calendar selectedMonth) {
         listAdapter.setSelectedMonth(selectedMonth);
+    }
+
+    /**
+     * Check if this view can be scrolled horizontally in a certain direction.
+     *
+     * @param direction Negative to check scrolling left, positive to check scrolling right.
+     * @return true if this view can be scrolled in the specified direction, false otherwise.
+     */
+    public boolean canScrollHorizontally(int direction) {
+        final int offset = computeHorizontalScrollOffset();
+        final int range = computeHorizontalScrollRange() - computeHorizontalScrollExtent();
+        if (range == 0) return false;
+        if (direction < 0) {
+            return offset > 0;
+        } else {
+            return offset < range - 1;
+        }
+    }
+
+    /**
+     * Check if this view can be scrolled vertically in a certain direction.
+     *
+     * @param direction Negative to check scrolling up, positive to check scrolling down.
+     * @return true if this view can be scrolled in the specified direction, false otherwise.
+     */
+    public boolean canScrollVertically(int direction) {
+        final int offset = computeVerticalScrollOffset();
+        final int range = computeVerticalScrollRange() - computeVerticalScrollExtent();
+        if (range == 0) return false;
+        if (direction < 0) {
+            return offset > 0;
+        } else {
+            return offset < range - 1;
+        }
+    }
+
+
+    private class CalendarLayoutManager extends LinearLayoutManager {
+
+        public CalendarLayoutManager(Context context) {
+            super(context);
+        }
+
+        public CalendarLayoutManager(Context context, int orientation, boolean reverseLayout) {
+            super(context, orientation, reverseLayout);
+        }
+
+        public CalendarLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+            super(context, attrs, defStyleAttr, defStyleRes);
+        }
+
+        @Override
+        public boolean supportsPredictiveItemAnimations() {
+            return false;
+        }
+
+        /***
+         * Workaround for know RV issue
+         * @link https://code.google.com/p/android/issues/detail?id=77846#c10
+         */
+        @Override
+        public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+            try {
+                super.onLayoutChildren(recycler, state);
+            } catch (IndexOutOfBoundsException e) {
+                Log.e("Error", "IndexOutOfBoundsException in RecyclerView happens");
+            }
+        }
     }
 
 }

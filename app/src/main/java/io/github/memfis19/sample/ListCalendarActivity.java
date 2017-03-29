@@ -242,6 +242,7 @@ public class ListCalendarActivity extends AppCompatActivity implements CalendarP
             @Override
             public void onEventsDisplayed(Pair<Calendar, Calendar> period) {
                 Log.d("", "");
+                listCalendar.refresh();
             }
         });
     }

@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -35,7 +34,7 @@ import io.github.memfis19.cadar.internal.utils.ViewUtils;
 /**
  * Created by memfis on 9/5/16.
  */
-public class EventHolder extends RecyclerView.ViewHolder {
+public class EventHolder extends ListHolder {
 
     private TextView title;
     private TextView dayLabel;
