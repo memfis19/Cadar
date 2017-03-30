@@ -232,7 +232,6 @@ public class ListCalendar extends RecyclerView implements CalendarController<Lis
         }
     }
 
-
     private class CalendarLayoutManager extends LinearLayoutManager {
 
         public CalendarLayoutManager(Context context) {
@@ -245,6 +244,19 @@ public class ListCalendar extends RecyclerView implements CalendarController<Lis
 
         public CalendarLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
             super(context, attrs, defStyleAttr, defStyleRes);
+        }
+
+        @Override
+        public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler,
+                                      RecyclerView.State state) {
+            try {
+                int value = super.scrollVerticallyBy(dy, recycler, state);
+                Log.i("", "");
+                return value;
+            } catch (Exception error) {
+                Log.e(ListCalendar.TAG, "IndexOutOfBoundsException in RecyclerView happens", error);
+            }
+            return 0;
         }
 
         @Override
@@ -261,7 +273,7 @@ public class ListCalendar extends RecyclerView implements CalendarController<Lis
             try {
                 super.onLayoutChildren(recycler, state);
             } catch (IndexOutOfBoundsException e) {
-                Log.e("Error", "IndexOutOfBoundsException in RecyclerView happens");
+                Log.e(ListCalendar.TAG, "IndexOutOfBoundsException in RecyclerView happens");
             }
         }
     }

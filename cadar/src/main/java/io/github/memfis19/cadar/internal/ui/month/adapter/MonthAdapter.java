@@ -7,6 +7,8 @@ import android.support.annotation.LayoutRes;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -136,7 +138,8 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
 
     @Override
     public int getItemPosition(Object object) {
-        return getDayPosition(((MonthGridAdapter) ((RecyclerView) object).getAdapter()).getMonth());
+        return getInitialPosition(initialDate) + (Integer) ((RecyclerView) object).getTag();
+//        return getDayPosition(((MonthGridAdapter) ((RecyclerView) object).getAdapter()).getMonth());
     }
 
     @Override
@@ -156,6 +159,7 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
 
         int shiftValue = position - getInitialPosition(initialDate);
 
+        recyclerView.setTag(shiftValue);
         monthHandlerThread.queuePreparation(initialDate, shiftValue, recyclerView);
 
         collection.addView(recyclerView);
@@ -263,11 +267,45 @@ public class MonthAdapter extends PagerAdapter implements OnDayChangeListener,
         monthGridAdapter.setMonthDayLayoutId(monthDayLayoutId);
         monthGridAdapter.setMonthDayDecoratorFactory(monthDayDecoratorFactory);
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 7);
+        CalendarLayoutManager gridLayoutManager = new CalendarLayoutManager(context, 7);
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setAdapter(monthGridAdapter);
 
         if (monthGridCallback != null) monthGridCallback.onMonthGridReady(month);
 //        monthGridAdapter.requestDisplayEvents();
+    }
+
+    private class CalendarLayoutManager extends GridLayoutManager {
+
+
+        public CalendarLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+            super(context, attrs, defStyleAttr, defStyleRes);
+        }
+
+        public CalendarLayoutManager(Context context, int spanCount) {
+            super(context, spanCount);
+        }
+
+        public CalendarLayoutManager(Context context, int spanCount, int orientation, boolean reverseLayout) {
+            super(context, spanCount, orientation, reverseLayout);
+        }
+
+        @Override
+        public boolean supportsPredictiveItemAnimations() {
+            return false;
+        }
+
+        /***
+         * Workaround for know RV issue
+         * @link https://code.google.com/p/android/issues/detail?id=77846#c10
+         */
+        @Override
+        public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+            try {
+                super.onLayoutChildren(recycler, state);
+            } catch (IndexOutOfBoundsException e) {
+                Log.e(MonthAdapter.TAG, "IndexOutOfBoundsException in RecyclerView happens");
+            }
+        }
     }
 }

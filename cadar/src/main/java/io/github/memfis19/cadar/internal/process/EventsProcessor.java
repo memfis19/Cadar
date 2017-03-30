@@ -38,14 +38,19 @@ public abstract class EventsProcessor<T, E> extends HandlerThread implements Scr
 
     private EventsProcessorCallback<T, E> eventsProcessorCallback;
 
+    private ScrollManager scrollManager;
+
     public EventsProcessor(boolean shouldProcess, EventCalculator eventProcessor, boolean processAsync) {
         super(String.valueOf(System.currentTimeMillis()), Process.THREAD_PRIORITY_BACKGROUND);
 
         this.shouldProcess = shouldProcess;
         this.eventCalculator = eventProcessor;
         this.processAsync = processAsync;
+    }
 
-        ScrollManager.getInstance().subscribeForScrollStateChanged(this);
+    public void setScrollManager(ScrollManager scrollManager) {
+        this.scrollManager = scrollManager;
+        this.scrollManager.subscribeForScrollStateChanged(this);
     }
 
     protected EventCalculator getEventProcessor() {
@@ -106,7 +111,7 @@ public abstract class EventsProcessor<T, E> extends HandlerThread implements Scr
     private void release() {
         hasQuit = true;
         resultQueue.clear();
-        ScrollManager.getInstance().unSubscribeForScrollStateChanged(this);
+        if (scrollManager != null) scrollManager.unSubscribeForScrollStateChanged(this);
     }
 
     private void handleRequest(final T target) {
@@ -122,7 +127,7 @@ public abstract class EventsProcessor<T, E> extends HandlerThread implements Scr
     }
 
     private void deliverResult(final T target, final E result) {
-        if (ScrollManager.getInstance().getCurrentScrollState() == ScrollManager.SCROLL_STATE_IDLE) {
+        if (scrollManager != null && scrollManager.getCurrentScrollState() == ScrollManager.SCROLL_STATE_IDLE) {
             responseHandler.post(new Runnable() {
                 @Override
                 public void run() {

@@ -52,6 +52,8 @@ public class MonthListCalendarInteractionActivity extends AppCompatActivity impl
         monthCalendar.setCalendarPrepareCallback(this);
         listCalendar.setCalendarPrepareCallback(this);
 
+        builder.setDisplayPeriod(Calendar.MONTH, 3);
+        listBuilder.setDisplayPeriod(Calendar.MONTH, 3);
 //        builder.setEventsProcessor(new MonthCustomProcessor());
 //        listBuilder.setEventsProcessor(new ListCustomEventProcessor());
 

@@ -65,8 +65,8 @@ class MonthGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
                 && month.get(Calendar.YEAR) == MonthCalendarHelper.getSelectedDay().get(Calendar.YEAR);
     }
 
-    void requestDisplayEvents() {
-        if (ScrollManager.getInstance().getCurrentScrollState() == ScrollManager.SCROLL_STATE_IDLE)
+    void requestDisplayEvents(View parent) {
+        if (ScrollManager.geViewInstance(parent).getCurrentScrollState() == ScrollManager.SCROLL_STATE_IDLE)
             requestMonthEvents();
     }
 

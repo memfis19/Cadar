@@ -24,19 +24,19 @@ public class MonthHandlerThread extends HandlerThread {
 
     private static final int NUM_OF_DAYS_IN_WEEK = 7;
 
-    public class MonthInfoDto {
+    private class MonthInfoDto {
         private Calendar calendar;
         private Integer shiftValue;
         private RecyclerView recyclerView;
 
-        public MonthInfoDto(Calendar calendar, Integer shiftValue, RecyclerView recyclerView) {
+        MonthInfoDto(Calendar calendar, Integer shiftValue, RecyclerView recyclerView) {
             this.calendar = calendar;
             this.shiftValue = shiftValue;
             this.recyclerView = recyclerView;
         }
     }
 
-    public interface AdapterPrepareListener {
+    interface AdapterPrepareListener {
         void onReadyAdapter(Calendar month, List<Calendar> monthDays, RecyclerView recyclerView);
     }
 
@@ -50,7 +50,7 @@ public class MonthHandlerThread extends HandlerThread {
         super(TAG, Process.THREAD_PRIORITY_BACKGROUND);
     }
 
-    public void setAdapterPrepareListener(AdapterPrepareListener adapterPrepareListener) {
+    void setAdapterPrepareListener(AdapterPrepareListener adapterPrepareListener) {
         this.adapterPrepareListener = adapterPrepareListener;
     }
 
@@ -80,7 +80,7 @@ public class MonthHandlerThread extends HandlerThread {
         return (Build.VERSION.SDK_INT > 17) ? super.quitSafely() : super.quit();
     }
 
-    public void queuePreparation(Calendar calendar, Integer shiftValue, RecyclerView recyclerView) {
+    void queuePreparation(Calendar calendar, Integer shiftValue, RecyclerView recyclerView) {
         if (hasQuit || requestHandler == null) return;
         requestHandler.obtainMessage(REQUEST_MONTH_PREPARATION,
                 new MonthInfoDto(calendar, shiftValue, recyclerView)).sendToTarget();

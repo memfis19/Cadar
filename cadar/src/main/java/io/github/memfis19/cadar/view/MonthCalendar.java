@@ -126,6 +126,7 @@ public class MonthCalendar extends LinearLayout implements ViewPager.OnPageChang
         else
             eventsAsyncProcessor = new MonthEventsProcessor(monthCalendarConfiguration.isEventProcessingEnabled(), monthCalendarConfiguration.getEventCalculator());
         eventsAsyncProcessor.setEventProcessor(monthCalendarConfiguration.getEventCalculator());
+        eventsAsyncProcessor.setScrollManager(ScrollManager.geViewInstance(this));
         eventsAsyncProcessor.start();
         eventsAsyncProcessor.getLooper();
 
@@ -164,7 +165,7 @@ public class MonthCalendar extends LinearLayout implements ViewPager.OnPageChang
 
                         monthGridView.setCurrentItem(MonthAdapter.getInitialPosition(monthCalendarConfiguration.getInitialDay()), false);
 
-                        ScrollManager.getInstance().subscribeForScrollStateChanged(MonthCalendar.this);
+                        ScrollManager.geViewInstance(MonthCalendar.this).subscribeForScrollStateChanged(MonthCalendar.this);
                         monthGridView.addOnPageChangeListener(MonthCalendar.this);
 
                         getViewTreeObserver().addOnPreDrawListener(MonthCalendar.this);
@@ -186,7 +187,7 @@ public class MonthCalendar extends LinearLayout implements ViewPager.OnPageChang
     public void releaseCalendar() {
         monthHandlerThread.quitSafely();
         eventsAsyncProcessor.quitSafely();
-        ScrollManager.getInstance().unSubscribeForScrollStateChanged(this);
+        ScrollManager.geViewInstance(this).unSubscribeForScrollStateChanged(this);
         MonthCalendarHelper.updateSelectedDay(MonthCalendarHelper.getToday());
     }
 
@@ -205,9 +206,9 @@ public class MonthCalendar extends LinearLayout implements ViewPager.OnPageChang
         if (scrollToSelectedDay) {
             monthGridView.setCurrentItem(monthAdapter.getDayPosition(selectedDay), false);
         }
-        ScrollManager.getInstance().unSubscribeForScrollStateChanged(this);
+        ScrollManager.geViewInstance(this).unSubscribeForScrollStateChanged(this);
         monthAdapter.notifyDayWasSelected();
-        ScrollManager.getInstance().subscribeForScrollStateChanged(this);
+        ScrollManager.geViewInstance(this).subscribeForScrollStateChanged(this);
     }
 
     private void initHeaderItem(final ViewGroup headerItem, int position) {
@@ -325,11 +326,11 @@ public class MonthCalendar extends LinearLayout implements ViewPager.OnPageChang
     @Override
     public void onPageScrollStateChanged(int state) {
         if (state == ViewPager.SCROLL_STATE_DRAGGING) {
-            ScrollManager.getInstance().notifyScrollStateChanged(ScrollManager.SCROLL_STATE_DRAGGING);
+            ScrollManager.geViewInstance(this).notifyScrollStateChanged(ScrollManager.SCROLL_STATE_DRAGGING);
         } else if (state == ViewPager.SCROLL_STATE_SETTLING) {
-            ScrollManager.getInstance().notifyScrollStateChanged(ScrollManager.SCROLL_STATE_SETTLING);
+            ScrollManager.geViewInstance(this).notifyScrollStateChanged(ScrollManager.SCROLL_STATE_SETTLING);
         } else if (state == ViewPager.SCROLL_STATE_IDLE) {
-            ScrollManager.getInstance().notifyScrollStateChanged(ScrollManager.SCROLL_STATE_IDLE);
+            ScrollManager.geViewInstance(this).notifyScrollStateChanged(ScrollManager.SCROLL_STATE_IDLE);
             checkMonth();
         }
     }
