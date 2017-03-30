@@ -142,7 +142,7 @@ public class MonthCalendar extends LinearLayout implements ViewPager.OnPageChang
                     initHeaderItem(monthHeaderView, i);
                 }
 
-                monthAdapter = new MonthAdapter(monthCalendarConfiguration.getContext(), monthHandlerThread,
+                monthAdapter = new MonthAdapter(getContext(), monthHandlerThread,
                         eventsAsyncProcessor, monthCalendarConfiguration);
                 monthAdapter.setOnDateChangeListener(onDateChangeListener);
                 monthAdapter.setMonthGridCallback(new MonthAdapter.MonthGridCallback() {

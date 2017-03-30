@@ -59,7 +59,7 @@ public class MonthCalendarActivity extends AppCompatActivity implements Calendar
             }
         };
 
-        MonthCalendarConfiguration.Builder builder = new MonthCalendarConfiguration.Builder(this);
+        MonthCalendarConfiguration.Builder builder = new MonthCalendarConfiguration.Builder();
         builder.setDisplayPeriod(Calendar.YEAR, 1);
         builder.setDisplayDaysOutOfMonth(false);
         builder.setEventProcessingEnabled(true);

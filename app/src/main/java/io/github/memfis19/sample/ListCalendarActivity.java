@@ -63,7 +63,7 @@ public class ListCalendarActivity extends AppCompatActivity implements CalendarP
 
         listCalendar = (ListCalendar) findViewById(R.id.listCalendar);
 
-        ListCalendarConfiguration.Builder listBuilder = new ListCalendarConfiguration.Builder(this);
+        ListCalendarConfiguration.Builder listBuilder = new ListCalendarConfiguration.Builder();
 
         EventDecoratorFactory eventDecoratorFactory = new EventDecoratorFactory() {
             @Override

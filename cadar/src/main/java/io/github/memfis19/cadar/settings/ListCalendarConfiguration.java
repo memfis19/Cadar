@@ -1,8 +1,6 @@
 package io.github.memfis19.cadar.settings;
 
-import android.content.Context;
 import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
 import java.util.Calendar;
@@ -34,17 +32,17 @@ public class ListCalendarConfiguration extends BaseCalendarConfiguration {
             weekLayoutId = R.layout.week_title_layout,
             monthLayoutId = R.layout.list_calendar_item_layout;
 
-    private ListCalendarConfiguration(@NonNull Context context) {
-        super(context);
+    private ListCalendarConfiguration() {
+        super();
     }
 
     public static class Builder extends BaseCalendarConfigurationBuilder<ListCalendarConfiguration> {
 
         private ListCalendarConfiguration listCalendarConfiguration;
 
-        public Builder(@NonNull Context context) {
-            super(context);
-            listCalendarConfiguration = new ListCalendarConfiguration(context);
+        public Builder() {
+            super();
+            listCalendarConfiguration = new ListCalendarConfiguration();
         }
 
         public Builder setEventLayout(@LayoutRes int layoutId, EventDecoratorFactory eventDecoratorFactory) {
@@ -72,9 +70,6 @@ public class ListCalendarConfiguration extends BaseCalendarConfiguration {
 
         @Override
         public ListCalendarConfiguration build() {
-            if (context == null)
-                throw new NullPointerException("Passed activity to month calendar configuration can't be null.");
-
             if (eventProcessingEnabled && eventCalculator == null)
                 throw new IllegalStateException("Configuration set to process events. But event processor not passed or null.");
             listCalendarConfiguration.eventProcessingEnabled = eventProcessingEnabled;

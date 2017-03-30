@@ -33,7 +33,7 @@ public class ExtendedCalendarActivity extends AppCompatActivity {
 
         extendedMonthCalendar = (ExtendedMonthCalendar) findViewById(R.id.extended_calendar);
 
-        MonthCalendarConfiguration.Builder builder = new MonthCalendarConfiguration.Builder(this);
+        MonthCalendarConfiguration.Builder builder = new MonthCalendarConfiguration.Builder();
         extendedMonthCalendar.setup(builder.build(), Calendar.getInstance(), Calendar.MONDAY, events, getResources().getColor(R.color.material_light_background_color));
     }
 

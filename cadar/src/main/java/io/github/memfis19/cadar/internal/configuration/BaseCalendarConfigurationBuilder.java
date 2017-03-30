@@ -1,6 +1,5 @@
 package io.github.memfis19.cadar.internal.configuration;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 
@@ -18,7 +17,6 @@ import io.github.memfis19.cadar.settings.CadarSettings;
  */
 public abstract class BaseCalendarConfigurationBuilder<T> {
 
-    protected Context context;
     protected Locale locale = Locale.getDefault();
     protected Calendar initialDay = DateUtils.getCalendarInstance();
 
@@ -43,8 +41,7 @@ public abstract class BaseCalendarConfigurationBuilder<T> {
             saturdayTitle,
             sundayTitle;
 
-    public BaseCalendarConfigurationBuilder(@NonNull Context context) {
-        this.context = context;
+    public BaseCalendarConfigurationBuilder() {
     }
 
     public BaseCalendarConfigurationBuilder setLocale(Locale locale) {

@@ -46,8 +46,8 @@ public class MonthListCalendarInteractionActivity extends AppCompatActivity impl
         monthCalendar = (MonthCalendar) findViewById(R.id.monthCalendar);
         listCalendar = (ListCalendar) findViewById(R.id.listCalendar);
 
-        MonthCalendarConfiguration.Builder builder = new MonthCalendarConfiguration.Builder(this);
-        ListCalendarConfiguration.Builder listBuilder = new ListCalendarConfiguration.Builder(this);
+        MonthCalendarConfiguration.Builder builder = new MonthCalendarConfiguration.Builder();
+        ListCalendarConfiguration.Builder listBuilder = new ListCalendarConfiguration.Builder();
 
         monthCalendar.setCalendarPrepareCallback(this);
         listCalendar.setCalendarPrepareCallback(this);

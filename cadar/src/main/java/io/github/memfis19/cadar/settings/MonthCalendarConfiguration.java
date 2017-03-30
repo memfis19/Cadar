@@ -1,8 +1,6 @@
 package io.github.memfis19.cadar.settings;
 
-import android.content.Context;
 import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
 import android.util.SparseArray;
 
 import java.util.Calendar;
@@ -37,17 +35,17 @@ public final class MonthCalendarConfiguration extends BaseCalendarConfiguration 
             weekTitleLayoutId = R.layout.month_calendar_day_of_week_layout;
 
 
-    private MonthCalendarConfiguration(@NonNull Context context) {
-        super(context);
+    private MonthCalendarConfiguration() {
+        super();
     }
 
     public static class Builder extends BaseCalendarConfigurationBuilder<MonthCalendarConfiguration> {
 
         private MonthCalendarConfiguration monthCalendarConfiguration;
 
-        public Builder(@NonNull Context context) {
-            super(context);
-            monthCalendarConfiguration = new MonthCalendarConfiguration(context);
+        public Builder() {
+            super();
+            monthCalendarConfiguration = new MonthCalendarConfiguration();
         }
 
         public Builder setFirstDayOfWeek(@CadarSettings.DayOfWeeks int firstDayOfWeek) {
@@ -79,9 +77,6 @@ public final class MonthCalendarConfiguration extends BaseCalendarConfiguration 
 
         @Override
         public MonthCalendarConfiguration build() throws NullPointerException, IllegalStateException, IllegalArgumentException {
-            if (context == null)
-                throw new NullPointerException("Passed activity to month calendar configuration can't be null.");
-
             if (initialDay == null)
                 throw new NullPointerException("Passed initial day can't be null.");
             monthCalendarConfiguration.initialDay = initialDay;
