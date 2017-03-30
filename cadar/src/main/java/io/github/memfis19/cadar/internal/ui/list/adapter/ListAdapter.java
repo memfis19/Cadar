@@ -22,6 +22,7 @@ import io.github.memfis19.cadar.event.DisplayEventCallback;
 import io.github.memfis19.cadar.event.OnDayChangeListener;
 import io.github.memfis19.cadar.event.OnEventClickListener;
 import io.github.memfis19.cadar.event.OnMonthChangeListener;
+import io.github.memfis19.cadar.internal.helper.ScrollManager;
 import io.github.memfis19.cadar.internal.process.EventsProcessor;
 import io.github.memfis19.cadar.internal.process.EventsProcessorCallback;
 import io.github.memfis19.cadar.internal.process.ListEventsProcessor;
@@ -93,6 +94,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListHolder>
         else
             listEventsAsyncProcessor = new ListEventsProcessor(configuration.isEventProcessingEnabled(), configuration.getEventCalculator());
 
+        listEventsAsyncProcessor.setScrollManager(ScrollManager.geViewInstance(calendarListView));
         listEventsAsyncProcessor.setEventProcessor(configuration.getEventCalculator());
         listEventsAsyncProcessor.setEvents(eventList);
         listEventsAsyncProcessor.start();
@@ -357,6 +359,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListHolder>
     public void release() {
         listEventsAsyncProcessor.quit();
         listItemModels.clear();
+        ScrollManager.geViewInstance(calendarListView).releaseScrollManager();
     }
 
     @Override

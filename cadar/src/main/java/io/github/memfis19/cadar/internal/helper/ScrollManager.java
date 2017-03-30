@@ -43,8 +43,15 @@ public final class ScrollManager {
         return viewScrollManagerMap.get(view);
     }
 
+    public void releaseScrollManager() {
+        subscribers = null;
+        viewScrollManagerMap.remove(view);
+        view = null;
+    }
+
     private ScrollManager(View view) {
         this.view = view;
+        subscribers = new ArrayList<>();
     }
 
     public void notifyScrollStateChanged(@ScrollState int scrollState) {

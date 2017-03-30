@@ -13,13 +13,13 @@ buildscript {
 }
 
 group = 'io.github.memfis19'
-version = '0.4.3'
+version = '0.4.4'
 
 ext {
     PUBLISH_GROUP_ID = 'io.github.memfis19'
     PUBLISH_ARTIFACT_ID = 'cadar'
-    PUBLISH_VERSION = '0.4.3'
-    PUBLISH_VERSION_CODE = 11
+    PUBLISH_VERSION = '0.4.4'
+    PUBLISH_VERSION_CODE = 12
     SUPPORT_VERSION = '25.3.0'
     TARGET_SDK = 24
     MIN_SDK = 10

@@ -187,7 +187,7 @@ public class MonthCalendar extends LinearLayout implements ViewPager.OnPageChang
     public void releaseCalendar() {
         monthHandlerThread.quitSafely();
         eventsAsyncProcessor.quitSafely();
-        ScrollManager.geViewInstance(this).unSubscribeForScrollStateChanged(this);
+        ScrollManager.geViewInstance(this).releaseScrollManager();
         MonthCalendarHelper.updateSelectedDay(MonthCalendarHelper.getToday());
     }
 
