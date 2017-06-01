@@ -3,9 +3,9 @@ apply plugin: 'com.android.application'
 ext {
     PUBLISH_GROUP_ID = 'io.github.memfis19'
     PUBLISH_ARTIFACT_ID = 'cadar'
-    PUBLISH_VERSION = '0.4.5'
-    PUBLISH_VERSION_CODE = 14
-    SUPPORT_VERSION = '25.3.0'
+    PUBLISH_VERSION = '0.4.6'
+    PUBLISH_VERSION_CODE = 15
+    SUPPORT_VERSION = '25.3.1'
     TARGET_SDK = 24
     MIN_SDK = 10
     BUILD_TOOLS = "25.0.2"
