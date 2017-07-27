@@ -6,6 +6,8 @@ public interface OnEventClickListener {
 
     void onEventClick(Event event, int position);
 
+    void onEventLongClick(Event event, int position);
+
     void onSyncClick(Event event, int position);
 
 }

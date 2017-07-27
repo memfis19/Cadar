@@ -104,6 +104,11 @@ public class ListCalendarActivity extends AppCompatActivity implements CalendarP
             public void onSyncClick(Event event, int position) {
                 Log.i("onSyncClick", String.valueOf(event));
             }
+
+            @Override
+            public void onEventLongClick(Event event, int position) {
+                Log.i("onEventLongClick", String.valueOf(event));
+            }
         });
     }
 

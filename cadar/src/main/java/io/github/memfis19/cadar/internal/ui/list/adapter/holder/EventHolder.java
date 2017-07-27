@@ -77,6 +77,16 @@ public class EventHolder extends ListHolder {
                     onEventClickListener.onEventClick(event, position);
             }
         });
+        itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (onEventClickListener != null) {
+                    onEventClickListener.onEventLongClick(event, position);
+                    return true;
+                }
+                return false;
+            }
+        });
 
         if (eventDecoratorFactory != null) {
             eventDecorator = eventDecoratorFactory.createEventDecorator(itemView);
