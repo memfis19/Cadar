@@ -118,6 +118,8 @@ public class MonthHolder extends ListHolder {
     public void detach() {
         if (monthBackground != null) {
             recyclerView.removeOnScrollListener(attachedScrollListener);
+        } else if (monthDecorator != null && monthDecorator.getScrollListener() != null) {
+            recyclerView.removeOnScrollListener(attachedScrollListener);
         }
     }
 
